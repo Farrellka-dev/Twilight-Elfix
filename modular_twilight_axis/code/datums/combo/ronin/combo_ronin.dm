@@ -49,7 +49,11 @@
 
 	var/obj/item/rogueweapon/listened_blade = null
 
+	/// Tanuki (minor): +4 PER на 4 успешных удара
+	var/tanuki_per_hits_left = 0
 
+	/// Tanuki (elder): riposte triggers on 4th successful hit
+	var/elder_tanuki_riposte_hits_left = 0
 // ----------------------------------------------------
 // INIT / DESTROY
 // ----------------------------------------------------
@@ -227,6 +231,245 @@
 // STACKS + FORCE
 // ----------------------------------------------------
 
+#define RONIN_TANUKI_PER_BONUS 4
+#define RONIN_TANUKI_PER_HITS  4
+
+/datum/component/combo_core/ronin/proc/_GetBladeForce()
+	// Берём текущую силу клинка (у тебя она уже бафается через стеки в ApplyBoundForceMultiplier)
+	UpdateActiveBlade()
+	if(active_blade)
+		return max(0, active_blade.force)
+	return 0
+
+/datum/component/combo_core/ronin/proc/_GetAimDirTo(atom/A)
+	if(!owner)
+		return SOUTH
+	if(!A)
+		return owner.dir
+	var/turf/ot = get_turf(owner)
+	var/turf/tt = get_turf(A)
+	if(!ot || !tt)
+		return owner.dir
+	var/d = get_dir(ot, tt)
+	return d ? d : owner.dir
+
+/datum/component/combo_core/ronin/proc/_Knockback(mob/living/target, tiles, dir_override = null)
+	if(!owner || !target || tiles <= 0)
+		return
+	var/d = dir_override || get_dir(owner, target)
+	if(!d)
+		d = owner.dir
+	var/turf/start = get_turf(target)
+	if(!start)
+		return
+	var/turf/dest = get_ranged_target_turf(start, d, tiles)
+	if(dest)
+		target.safe_throw_at(dest, tiles, 1, owner, force = MOVE_FORCE_STRONG)
+
+/datum/component/combo_core/ronin/proc/_ApplyBurnFromForce(mob/living/target, zone, mult = 0.5)
+	if(!target)
+		return
+	var/force = _GetBladeForce()
+	if(force <= 0)
+		return
+	var/burn = max(1, round(force * mult))
+
+	// /tg usually has apply_damage(); if your fork differs – swap this hook.
+	if(hascall(target, "apply_damage"))
+		target.apply_damage(burn, BURN, zone)
+	else
+		// fallback (less correct, but безопасно)
+		if(hascall(target, "adjustFireLoss"))
+			target.adjustFireLoss(burn)
+
+/datum/component/combo_core/ronin/proc/_ApplyBleed(mob/living/target, severity = 4)
+	if(!target)
+		return
+	// TODO: your codebase hook for bleeding stacks/severity
+	// Примеры (замени на то, что у вас реально есть):
+	// target.apply_status_effect(/datum/status_effect/debuff/bleeding, severity)
+	// или target.AddWound(/datum/wound/slash, severity)
+	if(hascall(target, "apply_status_effect"))
+		target.apply_status_effect(/datum/status_effect/debuff/bleeding, severity)
+	else
+		// мягкий fallback: просто сообщение (чтобы хоть видно было, что сработало)
+		to_chat(owner, span_warning("[target] starts bleeding (severity [severity])!"))
+
+/datum/component/combo_core/ronin/proc/_ApplyArmorWearForward(mult = 0.5, tiles = 2, zone = BODY_ZONE_CHEST)
+	if(!owner)
+		return
+	var/force = _GetBladeForce()
+	if(force <= 0)
+		return
+
+	var/d = owner.dir
+	var/turf/T = get_turf(owner)
+	if(!T)
+		return
+
+	// износ брони как в soundbreaker-логике (упрощённо)
+	for(var/i in 1 to tiles)
+		T = get_step(T, d)
+		if(!T)
+			break
+
+		for(var/mob/living/carbon/human/H in T)
+			if(H == owner)
+				continue
+
+			// в soundbreaker ты делал более умно по armor.getRating, тут — тот же паттерн:
+			_apply_combo_armor_wear_simple(H, zone, "slash", force, mult)
+
+/datum/component/combo_core/ronin/proc/_apply_combo_armor_wear_simple(mob/living/carbon/human/target, hit_zone, attack_flag, force_dynamic, multiplier = 1)
+	if(!target || !attack_flag || !force_dynamic)
+		return
+
+	var/wear = round(force_dynamic * multiplier)
+	wear = clamp(wear, 1, 25)
+	if(wear <= 0)
+		return
+
+	var/cover_flag
+	switch(hit_zone)
+		if(BODY_ZONE_HEAD)   cover_flag = HEAD
+		if(BODY_ZONE_CHEST)  cover_flag = CHEST
+		if(BODY_ZONE_L_ARM, BODY_ZONE_R_ARM) cover_flag = ARMS
+		if(BODY_ZONE_L_LEG, BODY_ZONE_R_LEG) cover_flag = LEGS
+		else
+			cover_flag = CHEST
+
+	for(var/obj/item/clothing/C in target.contents)
+		if(C.loc != target)
+			continue
+		if(!(C.body_parts_covered & cover_flag))
+			continue
+		if(!C.armor)
+			continue
+
+		var/rating = C.armor.getRating(attack_flag)
+		if(!isnum(rating) || rating <= 0)
+			continue
+
+		C.take_damage(wear, BRUTE, "slash")
+
+/datum/component/combo_core/ronin/proc/_DashSlashTengu(mob/living/target, zone)
+	if(!owner || !target)
+		return
+
+	var/force = _GetBladeForce()
+	if(force <= 0)
+		return
+
+	var/turf/start = get_turf(owner)
+	if(!start)
+		return
+
+	var/d = get_dir(owner, target)
+	if(!d)
+		d = owner.dir
+
+	// простая версия "как у soundbreaker": шаг 1-2 тайла, и на каждом пытаемся порезать
+	var/turf/t1 = get_step(start, d)
+	if(!t1 || t1.density)
+		return
+
+	var/turf/t2 = get_step(t1, d)
+	// если второй заблокирован, просто делаем первый
+
+	owner.forceMove(t1)
+	_RonSlashOnTurf(t1, force, zone)
+
+	if(t2 && !t2.density)
+		owner.forceMove(t2)
+		_RonSlashOnTurf(t2, force, zone)
+
+/datum/component/combo_core/ronin/proc/_RonSlashOnTurf(turf/T, force, zone)
+	if(!T)
+		return
+	var/mob/living/victim = null
+	for(var/mob/living/L in T)
+		if(L == owner)
+			continue
+		if(L.stat == DEAD)
+			continue
+		victim = L
+		break
+
+	if(!victim)
+		return
+
+	// 2 пореза = 2 раза “режущего” урона, упрощённо через apply_damage/adjustBruteLoss
+	for(var/i in 1 to 2)
+		var/dmg = max(1, round(force * 0.35))
+		if(hascall(victim, "apply_damage"))
+			victim.apply_damage(dmg, BRUTE, zone)
+		else if(hascall(victim, "adjustBruteLoss"))
+			victim.adjustBruteLoss(dmg)
+
+	_ApplyBleed(victim, 4)
+
+// ----------------------------------------------------
+// Tanuki: PER buff counters
+// ----------------------------------------------------
+
+/datum/component/combo_core/ronin/proc/_StartTanukiPerBuff()
+	tanuki_per_hits_left = RONIN_TANUKI_PER_HITS
+	// TODO: your stat system hook (PER +4)
+	// Примерные варианты:
+	// owner.AddStatBuff(STATKEY_PER, RONIN_TANUKI_PER_BONUS, "ronin_tanuki")
+	// owner.add_stat_modifier("ronin_tanuki", STATKEY_PER, RONIN_TANUKI_PER_BONUS)
+	to_chat(owner, span_notice("Tanuki's insight: +[RONIN_TANUKI_PER_BONUS] PER for [RONIN_TANUKI_PER_HITS] hits."))
+
+/datum/component/combo_core/ronin/proc/_EndTanukiPerBuff()
+	if(tanuki_per_hits_left <= 0)
+		return
+	tanuki_per_hits_left = 0
+	// TODO: remove stat buff hook
+	// owner.RemoveStatBuff("ronin_tanuki")
+	to_chat(owner, span_notice("Tanuki's insight fades."))
+
+/datum/component/combo_core/ronin/proc/_HandleTanukiPerOnHit()
+	if(tanuki_per_hits_left <= 0)
+		return
+	tanuki_per_hits_left--
+	if(tanuki_per_hits_left <= 0)
+		_EndTanukiPerBuff()
+
+/datum/component/combo_core/ronin/proc/_StartElderTanukiRiposte()
+	elder_tanuki_riposte_hits_left = 4
+	to_chat(owner, span_notice("Tanuki's riposte is set: triggers on the 4th hit."))
+
+/datum/component/combo_core/ronin/proc/_HandleElderTanukiRiposteOnHit(mob/living/target, zone)
+	if(elder_tanuki_riposte_hits_left <= 0)
+		return
+	elder_tanuki_riposte_hits_left--
+	if(elder_tanuki_riposte_hits_left > 0)
+		return
+
+	elder_tanuki_riposte_hits_left = 0
+
+	if(!owner || !target)
+		return
+
+	var/force = _GetBladeForce()
+	var/extra = max(1, round(force * 0.5))
+
+	// “рипост” — тут делаю ощутимый бонус: доп.урон + короткий стан
+	if(hascall(target, "apply_damage"))
+		target.apply_damage(extra, BRUTE, zone)
+	else if(hascall(target, "adjustBruteLoss"))
+		target.adjustBruteLoss(extra)
+
+	target.Stun(1 SECONDS)
+
+	owner.visible_message(
+		span_danger("[owner] answers with a perfect riposte!"),
+		span_notice("Riposte!"),
+	)
+
+#undef RONIN_TANUKI_PER_BONUS
+#undef RONIN_TANUKI_PER_HITS
+
 /datum/component/combo_core/ronin/proc/GetStackMultiplier()
 	return 1 + (ronin_stacks * RONIN_FORCE_PER_STACK)
 
@@ -335,45 +578,74 @@
 	if(!owner || !target || !rule_id)
 		return FALSE
 
-	var/power = max(1, ronin_stacks)
-	var/dur = 1 SECONDS + (power * 0.3 SECONDS)
-
 	switch(rule_id)
 		if("ryu")
-			return ComboRyuMinor(target, zone)
-		if("kitsune")
-			target.Slowdown(2 + power * 0.1)
-		if("tengu")
-			target.Stun(0.5 SECONDS + power * 0.1 SECONDS)
-		if("tanuki")
-			target.Immobilize(0.5 SECONDS + power * 0.1 SECONDS)
+			// +50% force в ожогах
+			_ApplyBurnFromForce(target, zone, 0.5)
 
-	to_chat(owner, span_notice("MINOR COMBO FIRED: [rule_id] (stacks=[ronin_stacks]) on [target]."))
+		if("kitsune")
+			// отталкивает на 2 тайла вперёд
+			var/d = _GetAimDirTo(target)
+			_Knockback(target, 2, d)
+
+		if("tanuki")
+			// +4 PER на 4 удара
+			_StartTanukiPerBuff()
+
+		if("tengu")
+			// кровотечение 4
+			_ApplyBleed(target, 4)
+
+	owner.visible_message(
+		span_danger("[owner] executes a minor ronin technique!"),
+		span_notice("Minor technique: [rule_id]."),
+	)
+
 	return TRUE
 
 /datum/component/combo_core/ronin/proc/ExecuteElderCombo(rule_id, mob/living/target, zone)
 	if(!owner || !rule_id)
 		return
 
-	var/power = max(1, ronin_stacks)
-	var/dur = 1.5 SECONDS + (power * 0.4 SECONDS)
-
 	switch(rule_id)
 		if("ryu")
-			ComboRyuElder(target, zone)
-			return
+			// сравнить stamina врага с силой клинка
+			if(!target)
+				return
+
+			var/force = _GetBladeForce()
+			var/stam = null
+			if(isnum(target.stamina))
+				stam = target.stamina
+
+			// если stamina неизвестна — хотя бы не ломаемся
+			if(isnull(stam))
+				target.OffBalance(1.5 SECONDS)
+			else if(force > stam)
+				target.OffBalance(2 SECONDS)
+			else
+				// иначе +2 к силе (я трактую как +2 стека ронина = +4% force, честно/красиво)
+				ronin_stacks = min(ronin_stacks + 2, RONIN_MAX_STACKS_OVERDRIVE)
+				ApplyBoundForceMultiplier()
+				to_chat(owner, span_notice("Ryu hardens your edge (+2 stacks)."))
+
 		if("kitsune")
-			if(target) target.Stun(1 SECONDS + power * 0.1 SECONDS)
-		if("tengu")
-			if(target) target.Immobilize(1 SECONDS + power * 0.1 SECONDS)
+			// +50% force по броне вперед на 2 тайла (износ брони)
+			_ApplyArmorWearForward(0.5, 2, zone)
+
 		if("tanuki")
-			if(target) target.Slowdown(3 + power * 0.15)
+			// рипост на 4 ударе
+			_StartElderTanukiRiposte()
+
+		if("tengu")
+			// рывок как у брейкера, 2 пореза
+			if(target)
+				_DashSlashTengu(target, zone)
 
 	owner.visible_message(
-		span_danger("[owner] unleashes a devastating ronin technique!"),
-		span_notice("Your prepared technique is released!"),
+		span_danger("[owner] releases an elder ronin technique!"),
+		span_notice("Elder technique: [rule_id]."),
 	)
-
 
 // ----------------------------------------------------
 // COUNTER STANCE
@@ -410,6 +682,23 @@
 		ronin_stacks--
 		ApplyBoundForceMultiplier()
 
+	// Tanuki (minor): считаем "4 удара" как 4 атаки (а не 4 успешных хита)
+	if(tanuki_per_hits_left > 0)
+		tanuki_per_hits_left--
+		if(tanuki_per_hits_left <= 0)
+			_EndTanukiPerBuff()
+
+	// Tanuki (elder): "рипост на 4 ударе" как 4 атаки
+	if(elder_tanuki_riposte_hits_left > 0)
+		elder_tanuki_riposte_hits_left--
+		if(elder_tanuki_riposte_hits_left <= 0)
+			elder_tanuki_riposte_hits_left = 0
+			// ВАЖНО: триггер рипоста тут только если у нас есть валидная цель
+			// try_consume может быть без моба-цели, так что используем target_atom.
+			var/mob/living/L = target_atom
+			if(isliving(L))
+				_HandleElderTanukiRiposteOnHit(L, zone)
+
 	return 0
 
 /datum/component/combo_core/ronin/proc/_sig_item_attack_success(datum/source, mob/living/target, mob/living/user)
@@ -437,22 +726,23 @@
 		to_chat(owner, span_danger("ELDER COMBO RELEASED: [rule_id] (stacks=[ronin_stacks])!"))
 		ExecuteElderCombo(rule_id, target, user.zone_selected)
 
-	
-
 /datum/component/combo_core/ronin/_sig_register_input(datum/source, skill_id, mob/living/target, zone)
-	SIGNAL_HANDLER
 	if(!owner || !skill_id)
 		return 0
 
-	// если bound клинок в руке — ввод ждёт успешного удара
+	INVOKE_ASYNC(src, PROC_REF(_async_register_input), skill_id, target, zone)
+	return COMPONENT_COMBO_ACCEPTED
+
+/datum/component/combo_core/ronin/proc/_async_register_input(skill_id, mob/living/target, zone)
+	if(QDELETED(src) || !owner || QDELETED(owner) || !skill_id)
+		return
+
 	if(HasDrawnBoundBlade())
 		pending_hit_input = skill_id
 		to_chat(owner, span_notice("Minor queued: [skill_id] (stacks=[ronin_stacks]). Hit to confirm."))
-		return COMPONENT_COMBO_ACCEPTED
+		return
 
-	// иначе — сразу регистрируем (elder-набор)
-	var/fired = RegisterInput(skill_id, null, zone)
-	return COMPONENT_COMBO_ACCEPTED | (fired ? COMPONENT_COMBO_FIRED : 0)
+	RegisterInput(skill_id, null, zone)
 
 /// dodge в стойке: если меч не вынут — quickdraw + хук "мгновенный удар"
 /datum/component/combo_core/ronin/proc/_sig_dodge_success(datum/source)
