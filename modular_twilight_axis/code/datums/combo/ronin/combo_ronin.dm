@@ -37,7 +37,8 @@
 	var/pending_hit_input = null
 
 	// cache base force for +2% per stack safely
-	var/list/base_force_cache = list() // key: blade, value: base force
+	var/list/base_force_cache = list()
+	var/list/base_ap_cache = list()
 
 	// counter stance
 	var/in_counter_stance = FALSE
@@ -480,6 +481,10 @@
 		base_force_cache = list()
 	if(isnull(base_force_cache[W]))
 		base_force_cache[W] = W.force
+	if(!islist(base_ap_cache))
+		base_ap_cache = list()
+	if(isnull(base_ap_cache[W]))
+		base_ap_cache[W] = W.armor_penetration
 
 /datum/component/combo_core/ronin/proc/ApplyBoundForceMultiplier()
 	if(!bound_blades || !bound_blades.len)
@@ -494,6 +499,7 @@
 		var/base = base_force_cache[W]
 		if(isnum(base))
 			W.force = round(base * mult, 1)
+			W.armor_penetration = round(base_ap_cache * mult, 1)
 
 /datum/component/combo_core/ronin/proc/RestoreAllBoundForces()
 	if(!islist(base_force_cache))
@@ -566,6 +572,15 @@
 	W.ronin_prepared_at = world.time
 	_ronin_apply_weapon_glow(W)
 
+	var/icon_file = 'modular_twilight_axis/icons/roguetown/misc/roninspells.dmi'
+	var/icon_state = null
+	switch(rule_id)
+		if("ryu") icon_state = "ronin_ryu"
+		if("tanuki") icon_state = "ronin_tanuki"
+		if("tengu") icon_state = "ronin_tengu"
+		if("kitsune") icon_state = "ronin_kitsune"
+
+	_ronin_overhead(owner, icon_file, icon_state, 2.0 SECONDS, 20)
 	to_chat(owner, span_notice("Elder prepared: [rule_id] -> [W]."))
 	return TRUE
 
@@ -596,6 +611,7 @@
 			// кровотечение 4
 			_ApplyBleed(target, 4)
 
+	ShowMinorComboIcon(target, rule_id)
 	owner.visible_message(
 		span_danger("[owner] executes a minor ronin technique!"),
 		span_notice("Minor technique: [rule_id]."),
@@ -711,6 +727,13 @@
 
 	// minor: подтвердить ввод и засчитать в history
 	if(pending_hit_input)
+		var/icon_file = 'modular_twilight_axis/icons/roguetown/misc/roninspells.dmi'
+		var/icon_state = null
+		switch(pending_hit_input)
+			if(1) icon_state = "ch_input"
+			if(2) icon_state = "cv_input"
+			if(3) icon_state = "cd_input"
+		_ronin_overhead(owner, icon_file, icon_state, 1.5 SECONDS, 20)
 		to_chat(owner, span_notice("Minor confirmed on hit: [pending_hit_input]."))
 		RegisterInput(pending_hit_input, target, user.zone_selected)
 		pending_hit_input = null
@@ -881,56 +904,18 @@
 	if(!target || !rule_id)
 		return
 
-	//var/icon_file = 'modular_twilight_axis/icons/roguetown/misc/roninspells.dmi'
+	var/icon_file = 'modular_twilight_axis/icons/roguetown/misc/roninspells.dmi'
 	var/icon_state = null
 
 	switch(rule_id)
-		if("ryu") icon_state = "ronin_minor_ryu"
-		// позже добавишь kitsune/tengu/tanuki
+		if("ryu") icon_state = "ronin_ryu"
+		if("tanuki") icon_state = "ronin_tanuki"
+		if("tengu") icon_state = "ronin_tengu"
+		if("kitsune") icon_state = "ronin_kitsune"
 
-	if(!icon_state)
+	_ronin_overhead(target, icon_file, icon_state, 1.0 SECONDS, 20)
+
+/datum/component/combo_core/ronin/proc/_ronin_overhead(mob/living/M, icon_file, icon_state, dur = 0.7 SECONDS, pixel_y = 20)
+	if(!M || !icon_file || !icon_state)
 		return
-
-	var/dur = 0.7 SECONDS
-	//target.play_overhead_indicator_flick(icon_file, icon_state, dur, ABOVE_MOB_LAYER + 0.3, null, 16, 0)
-
-/datum/component/combo_core/ronin/proc/ComboRyuMinor(mob/living/target, zone)
-	if(!owner || !target)
-		return FALSE
-
-	var/power = max(1, ronin_stacks)
-
-	// кровоток: стаки и длительность зависят от power
-	var/bleed_stacks = clamp(round(power * 0.35), 1, 6)
-	var/bleed_dur = 4 SECONDS + (power * 0.2 SECONDS)
-
-	target.apply_status_effect(/datum/status_effect/debuff/ronin_ryu_bleed, bleed_stacks, bleed_dur)
-
-	ShowMinorComboIcon(target, "ryu")
-
-	owner.visible_message(
-		span_danger("[owner] carves a precise bleeding cut!"),
-		span_notice("You land Ryu—blood begins to flow."),
-	)
-
-	return TRUE
-
-/datum/component/combo_core/ronin/proc/ComboRyuElder(mob/living/target, zone)
-	if(!owner)
-		return FALSE
-
-	var/power = max(1, ronin_stacks)
-
-	// поджог: чем больше power, тем больше стаков огня
-	// это использует ваши стандартные adjust_fire_stacks/ignite_mob из кода.
-	if(target)
-		var/fire = clamp(round(2 + power * 0.35), 2, 10)
-		target.adjust_fire_stacks(fire)
-		target.ignite_mob()
-
-	owner.visible_message(
-		span_danger("[owner]'s elder cut blooms into flame!"),
-		span_notice("You release Elder Ryu—fire erupts."),
-	)
-
-	return TRUE
+	M.play_overhead_indicator_flick(icon_file, icon_state, dur, ABOVE_MOB_LAYER + 0.3, null, pixel_y)

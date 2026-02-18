@@ -10,8 +10,11 @@
 	subclass_languages = list(/datum/language/kazengunese)
 	cmode_music = 'sound/music/combat_kazengite.ogg'
 	subclass_stats = list(
-		STATKEY_STR = 1,
-		STATKEY_SPD = 2
+		STATKEY_SPD = 3,
+		STATKEY_INT = 2,
+		STATKEY_PER = 1,
+		STATKEY_STR = -2,
+		STATKEY_CON = -2
 	)
 	subclass_skills = list(
 		/datum/skill/combat/wrestling = SKILL_LEVEL_APPRENTICE,
@@ -21,6 +24,7 @@
 		/datum/skill/misc/climbing = SKILL_LEVEL_JOURNEYMAN,
 		/datum/skill/misc/reading = SKILL_LEVEL_NOVICE,
 		/datum/skill/craft/sewing = SKILL_LEVEL_APPRENTICE, 
+		/datum/skill/combat/swords = SKILL_LEVEL_EXPERT,
 	)
 
 /datum/outfit/job/roguetown/adventurer/ronin/pre_equip(mob/living/carbon/human/H)
@@ -34,15 +38,13 @@
 	neck = /obj/item/storage/belt/rogue/pouch/coins/poor
 	belt = /obj/item/storage/belt/rogue/leather/black
 	backl = /obj/item/storage/backpack/rogue/satchel
+	beltl = /obj/item/rogueweapon/sword/sabre/mulyeog
+	beltr = /obj/item/rogueweapon/scabbard/sword/kazengun
+	armor = /obj/item/clothing/suit/roguetown/armor/basiceast
 	backpack_contents = list(
 		/obj/item/recipe_book/survival = 1,
 		/obj/item/flashlight/flare/torch/lantern,
 		)
 	H.set_blindness(0)
 	if(H.mind)
-		beltl = /obj/item/rogueweapon/sword/sabre/mulyeog
-		beltr = /obj/item/rogueweapon/scabbard/sword/kazengun
-		armor = /obj/item/clothing/suit/roguetown/armor/basiceast
-		H.adjust_skillrank_up_to(/datum/skill/combat/shields, 3, TRUE)
-		H.adjust_skillrank_up_to(/datum/skill/combat/swords, 4, TRUE)
 		H.AddComponent(/datum/component/combo_core/ronin, 20 SECONDS, 3)

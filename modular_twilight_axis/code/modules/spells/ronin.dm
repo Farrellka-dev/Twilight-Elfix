@@ -24,7 +24,7 @@
 	chargedloop = null
 	overlay_state = null
 
-	//action_icon = 'modular_twilight_axis/icons/roguetown/misc/roninspells.dmi'
+	action_icon = 'modular_twilight_axis/icons/roguetown/misc/roninspells.dmi'
 
 /obj/effect/proc_holder/spell/self/ronin/cast(list/targets, mob/living/user)
 	. = ..()
@@ -96,6 +96,7 @@
 /obj/effect/proc_holder/spell/self/ronin/bind_blade
 	name = "Bind Blade"
 	desc = "Bind your blade to your path."
+	overlay_state = "blade_bind"
 
 /obj/effect/proc_holder/spell/self/ronin/bind_blade/cast(list/targets, mob/living/user)
 	var/obj/item/rogueweapon/W = user.get_active_held_item()
