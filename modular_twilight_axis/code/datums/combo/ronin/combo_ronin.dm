@@ -851,7 +851,7 @@
 
 	var/obj/item/rogueweapon/scabbard/S = null
 	for(var/obj/item/rogueweapon/scabbard/scab in owner.contents)
-		if(scab.weapon_check(owner, active_blade))
+		if(weapon_check(owner, active_blade))
 			S = scab
 			break
 
@@ -919,3 +919,20 @@
 	if(!M || !icon_file || !icon_state)
 		return
 	M.play_overhead_indicator_flick(icon_file, icon_state, dur, ABOVE_MOB_LAYER + 0.3, null, pixel_y)
+
+/datum/component/combo_core/ronin/proc/weapon_check(mob/living/user, obj/A, obj/item/rogueweapon/scabbard/scab)
+	if(scab.sheathed)
+		to_chat(user, span_warning("The sheath is occupied!"))
+		return FALSE
+	if(scab.valid_blade && !istype(A, scab.valid_blade))
+		to_chat(user, span_warning("[A] won't fit in there."))
+		return FALSE
+	if(scab.valid_blades)
+		if(!(A.type in scab.valid_blades))
+			to_chat(user, span_warning("[A] won't fit in there."))
+			return FALSE
+	if(scab.invalid_blades)
+		if(A.type in scab.invalid_blades)
+			to_chat(user, span_warning("[A] won't fit in there."))
+			return FALSE
+	return TRUE
