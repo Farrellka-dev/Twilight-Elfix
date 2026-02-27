@@ -128,10 +128,15 @@
 	belt = /obj/item/storage/belt/rogue/leather/battleskirt/black
 	beltl = /obj/item/storage/belt/rogue/pouch/coins/poor
 	beltr = /obj/item/rogueweapon/scabbard/sheath
-	r_hand = /obj/item/rogueweapon/greatsword/zwei			// I think here we have runtime but I dunno how to fix it sorry Vlad
 	id = /obj/item/clothing/ring/aalloy
 	backpack_contents = list(
 		/obj/item/recipe_book/survival = 1,
 		/obj/item/repair_kit/metal/bad = 2,
 		/obj/item/rogueweapon/huntingknife/idagger = 1
 	)
+
+/datum/outfit/job/roguetown/lunatic/hero/post_equip(mob/living/carbon/human/H)
+	..()
+	var/obj/item/rogueweapon/greatsword/zwei/W = new(get_turf(H))
+	if(!H.put_in_hands(W))
+		W.forceMove(get_turf(H))
