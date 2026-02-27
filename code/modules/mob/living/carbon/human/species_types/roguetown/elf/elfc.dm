@@ -137,6 +137,8 @@
 		"Sunset" = SKIN_COLOR_SUNSET,
 		"Dusk" = SKIN_COLOR_DUSK,
 		"Gilded" = SKIN_COLOR_GILDED,
+		"Amber"	= SKIN_COLOR_SELFAMBER,
+		"Topaz" = SKIN_COLOR_SELFTOPAZ,
 		"Brass" = SKIN_COLOR_SELFBRASS,
 	)
 

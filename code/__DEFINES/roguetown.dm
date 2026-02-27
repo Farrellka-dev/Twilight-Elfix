@@ -42,6 +42,7 @@ Balloon Alert / Floating Text defines
 	/datum/species/human/northern,\
 	/datum/species/human/halfelf,\
 	/datum/species/elf/dark,\
+	/datum/species/elf/dark/raider,\
 	/datum/species/elf/wood,\
 	/datum/species/elf/sun,\
 	/datum/species/dwarf/mountain,\
@@ -141,6 +142,7 @@ Balloon Alert / Floating Text defines
 	/datum/species/human/northern,\
 	/datum/species/human/halfelf,\
 	/datum/species/elf/dark,\
+	/datum/species/elf/dark/raider,\
 	/datum/species/elf/wood,\
 	/datum/species/elf/sun,\
 	/datum/species/dwarf/mountain,\
@@ -170,6 +172,7 @@ Balloon Alert / Floating Text defines
 	/datum/species/human/northern,\
 	/datum/species/human/halfelf,\
 	/datum/species/elf/dark,\
+	/datum/species/elf/dark/raider,\
 	/datum/species/elf/wood,\
 	/datum/species/elf/sun,\
 	/datum/species/tieberian,\
