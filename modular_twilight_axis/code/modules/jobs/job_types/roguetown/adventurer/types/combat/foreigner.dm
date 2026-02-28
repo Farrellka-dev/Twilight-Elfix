@@ -101,10 +101,10 @@
 /datum/outfit/job/roguetown/adventurer/ronin/pre_equip(mob/living/carbon/human/H)
 	..()
 	to_chat(H, span_warning("A warrior hailing from the distant land of Kazengun, far across the eastern sea."))
-	head = /obj/item/clothing/head/roguetown/mentorhat
+	head = /obj/item/clothing/head/roguetown/gasa/ronin
 	gloves = /obj/item/clothing/gloves/roguetown/eastgloves1
 	pants = /obj/item/clothing/under/roguetown/heavy_leather_pants/eastpants1
-	shirt = /obj/item/clothing/suit/roguetown/shirt/undershirt/eastshirt1
+	shirt = /obj/item/clothing/suit/roguetown/shirt/kamishimo/ronin
 	shoes = /obj/item/clothing/shoes/roguetown/boots
 	neck = /obj/item/storage/belt/rogue/pouch/coins/poor
 	belt = /obj/item/storage/belt/rogue/leather/black
