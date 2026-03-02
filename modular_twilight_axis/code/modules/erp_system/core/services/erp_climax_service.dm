@@ -105,6 +105,19 @@
 					best_link = L
 
 		if(best_link)
+			if(controller.do_knot_action && P.have_knot)
+				var/mob/living/carbon/human/top = P.get_owner()
+				if(istype(top))
+					var/datum/component/erp_knotting/K = top.GetComponent(/datum/component/erp_knotting)
+					if(!K)
+						K = top.AddComponent(/datum/component/erp_knotting)
+
+					var/datum/erp_sex_organ/receiving = (best_link.init_organ == P) ? best_link.target_organ : best_link.init_organ
+					if(receiving && (receiving.erp_organ_type in list(SEX_ORGAN_VAGINA, SEX_ORGAN_ANUS, SEX_ORGAN_MOUTH)))
+						var/mob/living/btm = receiving.get_owner()
+						if(istype(btm))
+							K.try_knot_link(btm, P, receiving, penis_unit_id = 0, force_level = best_link.force)
+
 			controller.handle_inject(best_link, P, INJECT_ORGAN, who)
 		else
 			var/datum/reagents/Rp = P.extract_reagents(ERP_CLIMAX_AMOUNT_SINGLE)
