@@ -11,7 +11,6 @@
 		<br>
 		<b>Custom Emotes:</b><br>
 		<b>Say</b> - Type your message in the command bar, or use T to open the chat input.<br>
-		<b>LOOC</b> - Local OOC, heard within 7 tiles. Use Y to open.<br>
 		<b>Me</b> - Custom emote (verb panel or type <b>*your action here</b>). Up to 2048 characters. Starts with your character's name unless you substitute your name with $n. Default keybind is M. <br>
 		<b>Me (big)</b> - Same as Me but allows up to 4096 characters and multi-line input. You can make a custom keybind. Default is , <br>
 		<b>Subtle</b> - Type <b>@your action here</b>. Can be used for both Me and Me (Big) Only seen by nearby targets you select.<br>
