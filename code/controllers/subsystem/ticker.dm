@@ -73,6 +73,7 @@ SUBSYSTEM_DEF(ticker)
 	var/realm_type = "Grand Duchy"
 	/// Short form for casual references (e.g. "Duchy", "Republic"). Changed by usurpation rites.
 	var/realm_type_short = "Duchy"
+
 	/// Reports the current ruler's display name
 	var/rulertype = "Grand Duke"
 	/// The current ruling mob
@@ -190,10 +191,11 @@ SUBSYSTEM_DEF(ticker)
 			for(var/client/C in GLOB.clients)
 				window_flash(C, ignorepref = TRUE) //let them know lobby has opened up.
 //			to_chat(world, span_boldnotice("Welcome to [station_name()]!"))
-			send2chat(new /datum/tgs_message_content("New round starting on [SSmapping.config.map_name]!"), CONFIG_GET(string/chat_announce_new_game))
+//			send2chat(new /datum/tgs_message_content("New round starting on [SSmapping.config.map_name]!"), CONFIG_GET(string/chat_announce_new_game))
 			current_state = GAME_STATE_PREGAME
 			//Everyone who wants to be an observer is now spawned
 			create_observers()
+			SEND_SIGNAL(src, COMSIG_TICKER_ENTER_PREGAME)
 			fire()
 		if(GAME_STATE_PREGAME)
 			//lobby stats for statpanels
@@ -231,6 +233,7 @@ SUBSYSTEM_DEF(ticker)
 					timeLeft = null
 					Master.SetRunLevel(RUNLEVEL_LOBBY)
 				else
+					SEND_SIGNAL(src, COMSIG_TICKER_ENTER_SETTING_UP)
 					current_state = GAME_STATE_SETTING_UP
 					Master.SetRunLevel(RUNLEVEL_SETUP)
 					if(start_immediately)
@@ -243,6 +246,7 @@ SUBSYSTEM_DEF(ticker)
 				start_at = world.time + 600
 				timeLeft = null
 				Master.SetRunLevel(RUNLEVEL_LOBBY)
+				SEND_SIGNAL(src, COMSIG_TICKER_ERROR_SETTING_UP)
 
 		if(GAME_STATE_PLAYING)
 			check_queue()
@@ -322,10 +326,13 @@ SUBSYSTEM_DEF(ticker)
 
 /datum/controller/subsystem/ticker/proc/setup()
 	message_admins(span_boldannounce("Starting game..."))
-	var/init_start = world.timeofday
 
 	if(SSmapping.map_adjustment)
 		realm_name = SSmapping.map_adjustment.realm_name
+		realm_type = SSmapping.map_adjustment.realm_type // TA EDIT
+		realm_type_short = SSmapping.map_adjustment.realm_type_short // TA EDIT
+	to_chat(world, "<b><span class='notice'><span class='big'>Welcome to the [SSticker.realm_type] of [SSticker.realm_name].</span></span></b>")
+	var/init_start = world.timeofday
 	CHECK_TICK
 	//Configure mode and assign player to special mode stuff
 	var/can_continue = 0
@@ -427,6 +434,8 @@ SUBSYSTEM_DEF(ticker)
 	SSgamemode.current_storyteller?.process(STORYTELLER_WAIT_TIME * 0.1) // we want this asap
 	SSgamemode.current_storyteller?.round_started = TRUE
 
+	world.TgsAnnounceRoundStart()
+
 	setup_done = TRUE
 
 	job_change_locked = FALSE
@@ -480,7 +489,10 @@ SUBSYSTEM_DEF(ticker)
 			continue
 		if(player.ready == PLAYER_READY_TO_PLAY)
 			GLOB.joined_player_list += player.ckey
+			update_bandits_slots()
 			update_wretch_slots()
+			update_mercenary_slots()
+			update_adventurer_slots()
 			player.create_character(FALSE)
 		else
 			player.new_player_panel()

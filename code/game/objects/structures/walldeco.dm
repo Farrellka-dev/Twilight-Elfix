@@ -231,12 +231,16 @@
 	..()
 
 /obj/structure/fluff/walldeco/customflag
-	name = "Azure Peak flag"
+	name = "Twilight Axis flag"
 	desc = "A banner flutters in the breeze in the proud heraldic colors of the Duchy."
 	icon_state = "wallflag"
 
 /obj/structure/fluff/walldeco/customflag/Initialize()
 	. = ..()
+	if(SSmapping.config.map_name == "Rockhill")
+		name = "Enigma flag"
+	else
+		name = "Twilight Axis flag"
 	if(GLOB.lordprimary)
 		lordcolor(GLOB.lordprimary,GLOB.lordsecondary)
 	GLOB.lordcolor += src

@@ -258,7 +258,10 @@ SUBSYSTEM_DEF(migrants)
 
 	SSticker.minds += character.mind
 	GLOB.joined_player_list += character.ckey
+	update_bandits_slots()
 	update_wretch_slots()
+	update_mercenary_slots()
+	update_adventurer_slots()
 	if(character.client)
 		character.client.update_ooc_verb_visibility()
 
@@ -288,6 +291,8 @@ SUBSYSTEM_DEF(migrants)
 	to_chat(character, span_alertsyndie("I am a [role.name]!"))
 	to_chat(character, span_notice(wave.greet_text))
 	to_chat(character, span_notice(role.greet_text))
+
+	ADD_TRAIT(character, TRAIT_OUTLANDER, TRAIT_GENERIC) //TA EDIT
 
 	if(role.outfit)
 		var/datum/outfit/outfit = new role.outfit()

@@ -6,6 +6,7 @@
 		"Court Magician",\
 		"Marshal",\
 		"Knight",\
+		"Royal Knight", \
 		"Bishop",\
 		"Martyr",\
 		"Keeper",\
@@ -17,4 +18,17 @@
 		"Wretch",\
 		"Gnoll",\
 		"Veteran",\
+		"Guildmaster",\
+		"Court Magician",\
+		"Keeper",\
+		"Orthodoxist",\
+		"Druid",\
+		"Acolyte",\
+		"Man at Arms",\
+		"Royal Guard",\
+		"Vanguard", \
+		"Overseer",\
+		"Watchman", \
+		"Town Watch", \
+		"Squire",\
 	)

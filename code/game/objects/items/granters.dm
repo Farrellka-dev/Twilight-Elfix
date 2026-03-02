@@ -75,7 +75,7 @@
 
 	var/spell
 	var/spellname = "conjure bugs"
-
+	
 /obj/item/book/granter/spell/already_known(mob/user)
 	if(!spell)
 		return TRUE
@@ -95,6 +95,17 @@
 	user.mind.AddSpell(S)
 	user.log_message("learned the spell [spellname] ([S])", LOG_ATTACK, color="orange")
 	onlearned(user)
+
+/obj/item/book/granter/spell/attack_self(mob/living/user)
+	if(
+		!HAS_TRAIT(user, TRAIT_ARCYNE_T1) \
+		&& !HAS_TRAIT(user, TRAIT_ARCYNE_T2) \
+		&& !HAS_TRAIT(user, TRAIT_ARCYNE_T3) \
+		&& !HAS_TRAIT(user, TRAIT_ARCYNE_T4)
+	)
+		to_chat(user, span_danger("I don't know how to parse [src]. It hurts my head."))
+		return FALSE
+	..()
 
 /obj/item/book/granter/spell/random
 	icon_state = "random_book"
@@ -550,7 +561,7 @@ UNDER NO CIRCUMSTANCE SHOULD ANY OF THE BOOKS BE GIVEN OUT INTO SPAWNERS OR TO B
 			REMOVE_TRAIT(user, TRAIT_ARCYNE_T1, TRAIT_GENERIC)
 		onlearned(user)
 
-/obj/item/book/granter/arcynetyr/onlearned(mob/living/carbon/user)
+/obj/item/book/granter/arcynetyr/onlearned(mob/living/carbon/user) 
 	..()
 	if(oneuse == TRUE)
 		name = "siphoned scroll"
