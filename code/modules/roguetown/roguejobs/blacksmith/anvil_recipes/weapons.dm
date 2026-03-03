@@ -565,6 +565,12 @@
 	additional_items = list(/obj/item/grown/log/tree/small)
 	created_item = /obj/item/rogueweapon/spear/trainer
 
+/datum/anvil_recipe/weapons/iron/dory
+	name = "Dory, Iron (+1 Iron, +1 Small Log)"
+	req_bar = /obj/item/ingot/iron
+	additional_items = list(/obj/item/ingot/iron, /obj/item/grown/log/tree/small)
+	created_item = /obj/item/rogueweapon/spear/spellblade
+
 /datum/anvil_recipe/weapons/iron/bardiche
 	name = "Bardiche, Iron (+1 Iron, +1 Small Log)"
 	req_bar = /obj/item/ingot/iron

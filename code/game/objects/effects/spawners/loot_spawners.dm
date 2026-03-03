@@ -433,6 +433,7 @@
 		/obj/item/reagent_containers/food/snacks/rogue/meat/coppiette = 1,
 		/obj/item/reagent_containers/food/snacks/rogue/cheddarwedge/aged = 1,
 		/obj/item/reagent_containers/food/snacks/rogue/meat/salami = 1,
+		/obj/item/reagent_containers/food/snacks/grown/apple/gold = 1,
 	)
 
 //x3 of the above

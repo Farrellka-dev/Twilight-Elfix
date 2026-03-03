@@ -61,6 +61,7 @@
 		/obj/item/reagent_containers/glass/bottle/alchemical/healthpot = 1,
 		/obj/item/rogueweapon/huntingknife/combat = 1,
 		/obj/item/rogueweapon/scabbard/sheath = 1,
+		/obj/item/riddleofsteel = 1
 		)
 
 /datum/outfit/job/roguetown/wretch/munitioneer/choose_loadout(mob/living/carbon/human/H)

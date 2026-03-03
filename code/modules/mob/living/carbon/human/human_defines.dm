@@ -155,6 +155,7 @@
 	var/vampire_skin = null
 	var/vampire_eyes = null
 	var/vampire_hair = null
+	var/vampire_ears = null
 	//An alternative headshot link that can be used when users want to use it for a special role like while a vampire, werewolf, bandit, etc.
 	var/vampire_headshot_link
 	var/lich_headshot_link

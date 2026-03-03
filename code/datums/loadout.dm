@@ -2025,6 +2025,69 @@ GLOBAL_LIST_EMPTY(loadout_items_by_category)
 	path = /obj/item/flowercrown/rosa/resprite
 	donatitem = TRUE
 
+/datum/loadout_item/tw_d_horns_donat
+	name = "horns helmkleinod"
+	category = list("Головные уборы", "Донат")
+	path = /obj/item/clothing/head/roguetown/tw_d_horns
+	donatitem = TRUE
+	donat_tier = 2
+
+/datum/loadout_item/tw_d_castle_red_donat
+	name = "castle helmkleinod"
+	category = list("Головные уборы", "Донат")
+	path = /obj/item/clothing/head/roguetown/tw_d_castle_red
+	donatitem = TRUE
+	donat_tier = 2
+
+/datum/loadout_item/tw_d_graggar_donat
+	name = "bloodied star helmkleinod"
+	category = list("Головные уборы", "Донат")
+	path = /obj/item/clothing/head/roguetown/tw_d_graggar
+	donatitem = TRUE
+	donat_tier = 2
+	
+/datum/loadout_item/tw_d_efreet_donat
+	name = "afreet helmkleinod"
+	category = list("Головные уборы", "Донат")
+	path = /obj/item/clothing/head/roguetown/tw_d_efreet
+	donatitem = TRUE
+	donat_tier = 2
+
+/datum/loadout_item/tw_d_feathers_donat
+	name = "feathers accessory"
+	category = list("Головные уборы", "Донат")
+	path = /obj/item/clothing/head/roguetown/tw_d_feathers
+	donatitem = TRUE
+	donat_tier = 2
+
+/datum/loadout_item/tw_d_oathtaker_donat
+	name = "oathtaker symbol"
+	category = list("Головные уборы", "Донат")
+	path = /obj/item/clothing/head/roguetown/tw_d_oathtaker
+	donatitem = TRUE
+	donat_tier = 2
+
+/datum/loadout_item/tw_d_windmill_donat
+	name = "windmill helmkleinod"
+	category = list("Головные уборы", "Донат")
+	path = /obj/item/clothing/head/roguetown/tw_d_windmill
+	donatitem = TRUE
+	donat_tier = 2
+
+/datum/loadout_item/tw_d_swan_donat
+	name = "swan on lake"
+	category = list("Головные уборы", "Донат")
+	path = /obj/item/clothing/head/roguetown/tw_d_swan
+	donatitem = TRUE
+	donat_tier = 2
+
+/datum/loadout_item/tw_d_dragon_red_donat
+	name = "dragon's dread"
+	category = list("Головные уборы", "Донат")
+	path = /obj/item/clothing/head/roguetown/tw_d_dragon_red
+	donatitem = TRUE
+	donat_tier = 2
+
 // Пояса
 
 /datum/loadout_item/donat/hammerhold_sash

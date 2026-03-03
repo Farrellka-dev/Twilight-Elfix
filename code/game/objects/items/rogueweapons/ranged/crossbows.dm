@@ -88,6 +88,8 @@
 		if(c_bow.onehanded)
 			if(mastermob.get_num_arms(FALSE) < 2 || mastermob.get_inactive_held_item())
 				newtime *= 1.5 // more time if firing one-handed.
+		if(c_bow.chambered)
+			newtime *= c_bow.chambered.charge_time_mult
 		if(newtime > 1)
 			return newtime
 		else
@@ -129,7 +131,8 @@
 		if(c_bow.onehanded)
 			if(mastermob.get_num_arms(FALSE) < 2 || mastermob.get_inactive_held_item())
 				newtime *= 2 // more time if firing one-handed.
-
+		if(c_bow.chambered)
+			newtime *= c_bow.chambered.charge_time_mult
 		if(newtime > 0)
 			return newtime
 		else

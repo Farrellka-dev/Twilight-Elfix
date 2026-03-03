@@ -34,6 +34,7 @@
 /obj/item/ammo_casing/caseless/rogue
 	firing_effect_type = null
 	icon = 'icons/roguetown/weapons/ammo.dmi'
+	var/ammo_weight = 1 // Weight cost in a quiver. Default 1, heavy ammo costs more.
 
 /obj/item/ammo_casing/caseless/rogue/get_mechanics_examine(mob/user)
 	. = ..()
@@ -853,7 +854,8 @@
 //Only ammo casing, no 'projectiles'. You throw the casing, as weird as it is.
 /obj/item/ammo_casing/caseless/rogue/javelin
 	force = 14
-	throw_speed = 4	
+	throw_speed = 4
+	ammo_weight = 5 // Javelins are bulky — 5 weight each in a javelinbag
 	name = "iron javelin"
 	desc = "A tool used for centuries, as early as recorded history. This one is tipped with a iron head; standard among militiamen and irregulars alike."
 	icon_state = "ijavelin"
@@ -963,6 +965,7 @@
 	possible_item_intents = list(INTENT_GENERIC) //not intended to attack with them
 	slot_flags = ITEM_SLOT_MOUTH
 	max_integrity = 20
+	charge_time_mult = 0.75 // Sling shoots faster than bows, but is in exchange, weaker.
 
 /obj/item/ammo_casing/caseless/rogue/sling_bullet/getonmobprop(tag)
 	. = ..()
@@ -1054,13 +1057,13 @@
 	flag = "piercing"
 	speed = 0.4
 	npc_simple_damage_mult = 2.5 // Deals roughly ~75-95 damage against a simplemob, compared to the ~140 damage of a crossbolt or arrow.
-	ricochets_max = 4
+	ricochets_max = 2
 	ricochet_chance = 80
 	ricochet_auto_aim_angle = 40
 	ricochet_auto_aim_range = 5
 	ricochet_incidence_leeway = 40
 	ricochet_decay_chance = 1
-	ricochet_decay_damage = 2 /// stronger with every bounce, fuck it
+	ricochet_decay_damage = 1.5 /// stronger with every bounce. Limited to 1.5 to stop edge case
 	min_range = MIN_BULLET_RANGE
 	max_range = MAX_BULLET_RANGE
 	dam_falloff_factor = DAM_FALLOFF_BULLET
@@ -1080,7 +1083,7 @@
 
 /obj/projectile/bullet/reusable/sling_bullet/stone
 	name = "stone sling bullet"
-	damage = 30 //proper stones are better
+	damage = 25 //proper stones are better
 	ammo_type = /obj/item/ammo_casing/caseless/rogue/sling_bullet/stone
 
 /obj/projectile/bullet/reusable/sling_bullet/aalloy
@@ -1090,27 +1093,27 @@
 
 /obj/projectile/bullet/reusable/sling_bullet/bronze
 	name = "bronze sling bullet"
-	damage = 35
-	armor_penetration = 20 //Slightly more damage, but with -33% AP.
+	damage = 30
+	armor_penetration = 25 //Slightly more damage, but with -33% AP.
 	ammo_type = /obj/item/ammo_casing/caseless/rogue/sling_bullet/bronze
-	speed = 0.15 // Faster!
+	speed = 0.25 // Faster!
 
 /obj/projectile/bullet/reusable/sling_bullet/iron
 	name = "iron sling bullet"
-	damage = 30
-	armor_penetration = 30
+	damage = 25
+	armor_penetration = 35
 	ammo_type = /obj/item/ammo_casing/caseless/rogue/sling_bullet/iron
 
 /obj/projectile/bullet/reusable/sling_bullet/steel
 	name = "steel sling bullet"
-	damage = 40 //Best-of-the-best. Harder to mass-produce, however.
-	armor_penetration = 40
+	damage = 35 //Best-of-the-best. Harder to mass-produce, however.
+	armor_penetration = 45
 	ammo_type = /obj/item/ammo_casing/caseless/rogue/sling_bullet/steel
 
 /obj/projectile/bullet/reusable/sling_bullet/paalloy
 	name = "ancient sling bullet"
-	damage = 35 // Best of both worlds 'cuz why not
-	armor_penetration = 30
+	damage = 30 // Best of both worlds 'cuz why not
+	armor_penetration = 35
 	ammo_type = /obj/item/ammo_casing/caseless/rogue/sling_bullet/paalloy
 	ricochets_max = 6
 

@@ -19,6 +19,7 @@
 	var/firing_effect_type = null	//the visual effect appearing when the ammo is fired.
 	var/heavy_metal = TRUE
 	var/harmful = TRUE //pacifism check for boolet, set to FALSE if bullet is non-lethal
+	var/charge_time_mult = 1 // Multiplier on weapon charge time. <1 = faster, >1 = slower.
 
 /obj/item/ammo_casing/spent
 	name = "spent bullet casing"
