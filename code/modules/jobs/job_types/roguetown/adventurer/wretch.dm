@@ -49,8 +49,8 @@
 
 		/datum/advclass/wretch/twilight_corsair,
 		/datum/advclass/wretch/lunacyembracer,
-		/datum/advclass/wretch/rogueshaman
-
+		/datum/advclass/wretch/rogueshaman,
+		/datum/advclass/wretch/thehero
 	)
 
 /datum/job/roguetown/wretch/after_spawn(mob/living/L, mob/M, latejoin = TRUE)
