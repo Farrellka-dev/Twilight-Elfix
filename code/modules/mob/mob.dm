@@ -740,7 +740,9 @@ GLOBAL_VAR_INIT(mobids, 1)
  * For mobs this just shows the inventory
  */
 /mob/MouseDrop_T(atom/dropping, atom/user)
-	..()
+	. = ..()
+	if(.)
+		return .
 	if(ismob(dropping) && dropping != user)
 		var/mob/U = user
 		var/mob/M = dropping

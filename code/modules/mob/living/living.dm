@@ -398,6 +398,12 @@
 		return FALSE
 	if(throwing || !(mobility_flags & MOBILITY_PULL))
 		return FALSE
+	if(isliving(AM) && buckled)
+		var/datum/component/riding/riding_datum = buckled.GetComponent(/datum/component/riding)
+		if(riding_datum)
+			var/mob/living/target = AM
+			to_chat(src, span_warning("I can't drag [target] while mounted."))
+			return FALSE
 
 	AM.add_fingerprint(src)
 
@@ -425,13 +431,6 @@
 
 	if(isliving(AM))
 		var/mob/living/target = AM
-		if(buckled)
-			var/datum/component/riding/riding_datum = buckled.GetComponent(/datum/component/riding)
-			if(riding_datum)
-				if(target.stat == CONSCIOUS && !target.incapacitated(FALSE, TRUE))
-					to_chat(src, span_warning("[target] needs to be tied up or unaware for me to drag them."))
-					stop_pulling()
-					return FALSE
 		log_combat(src, target, "grabbed", addition="passive grab")
 		if(!iscarbon(src))
 			target.LAssailant = null

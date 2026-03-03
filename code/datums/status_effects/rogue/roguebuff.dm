@@ -1421,29 +1421,29 @@
 	desc = span_notice("I am on guard, and ready to clash. If I am hit, I will successfully defend. Attacking will make me lose my focus.")
 	icon_state = "clash"
 
-/// Brief buffer after a successful spell deflection. This allows the player to deflect a single spell that has multiple projectiles - or if multiple projectiles are fired by different people in quick succession, for funny anime moment.
-/// While active, subsequent deflectable projectiles/spells are also deflected without requiring guard.
-/datum/status_effect/buff/spell_parry_buffer
-	id = "spell_parry_buffer"
+/// Brief buffer after a successful deflection (guard vs spells, projectiles, or weapon specials).
+/// While active, subsequent deflectable attacks are also deflected without requiring guard.
+/datum/status_effect/buff/parry_buffer
+	id = "parry_buffer"
 	duration = 1 SECONDS
-	alert_type = /atom/movable/screen/alert/status_effect/buff/spell_parry_buffer
+	alert_type = /atom/movable/screen/alert/status_effect/buff/parry_buffer
 
-/datum/status_effect/buff/spell_parry_buffer/on_apply()
+/datum/status_effect/buff/parry_buffer/on_apply()
 	. = ..()
 	RegisterSignal(owner, COMSIG_ATOM_BULLET_ACT, PROC_REF(buffer_struck_by_projectile), TRUE)
 
-/datum/status_effect/buff/spell_parry_buffer/on_remove()
+/datum/status_effect/buff/parry_buffer/on_remove()
 	UnregisterSignal(owner, COMSIG_ATOM_BULLET_ACT)
 	. = ..()
 
-/datum/status_effect/buff/spell_parry_buffer/proc/buffer_struck_by_projectile(datum/source, obj/projectile/P)
+/datum/status_effect/buff/parry_buffer/proc/buffer_struck_by_projectile(datum/source, obj/projectile/P)
 	if(P.guard_deflectable)
 		if(P.on_guard_deflect(owner, silent = TRUE))
 			return COMPONENT_ATOM_BLOCK_BULLET
 
-/atom/movable/screen/alert/status_effect/buff/spell_parry_buffer
-	name = "Spell Parry"
-	desc = span_notice("A brief window of spell deflection lingers from my guard.")
+/atom/movable/screen/alert/status_effect/buff/parry_buffer
+	name = "Parry"
+	desc = span_notice("A brief window of deflection lingers from my guard.")
 	icon_state = "clash"
 
 /atom/movable/screen/alert/status_effect/buff/clash/limbguard

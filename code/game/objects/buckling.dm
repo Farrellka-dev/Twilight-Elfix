@@ -12,7 +12,7 @@
 /atom/movable/attack_hand(mob/living/user)
 	. = ..()
 	if(.)
-		return FALSE
+		return // This return the parent's value. Do not change to explicit FALSE!
 	if(!can_buckle || !has_buckled_mobs())
 		return FALSE
 	if(user.buckled == src)

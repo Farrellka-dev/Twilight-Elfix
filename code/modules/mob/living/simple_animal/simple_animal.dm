@@ -199,6 +199,10 @@ GLOBAL_VAR_INIT(farm_animals, FALSE)
 	. = ..()
 	if(can_buckle && max_buckled_mobs)
 		. += span_info("This can carry up to [max_buckled_mobs] rider[max_buckled_mobs == 1 ? "" : "s"].")
+		. += span_info("To mount an incapacitated or tied up mob, a rider must be present on the mount.")
+		. += span_info("To dismount an incapacitated or tied up mob, all riders must dismount, first.")
+		if(ssaddle)
+			. += span_info("Use middle-mouse button on the mount to open its inventory.")
 
 /mob/living/simple_animal/Initialize()
 	. = ..()
@@ -977,10 +981,37 @@ GLOBAL_VAR_INIT(farm_animals, FALSE)
 		M.visible_message(span_danger("[M] falls off [src]!"))
 	..()
 	update_icon()
-
 /mob/living/simple_animal/hostile/user_buckle_mob(mob/living/M, mob/user)
 	if(user != M)
-		return
+		if(!has_buckled_mobs())
+			return FALSE
+		var/mob/living/driver = buckled_mobs[1]
+		if(driver == user)
+			to_chat(user, span_warning("I need someone else's help to hoist [M]!"))
+			return FALSE
+		if(buckled_mobs.len >= max_buckled_mobs)
+			to_chat(user, span_warning("[src] has no more room!"))
+			return FALSE
+		if(!M || M == src)
+			return FALSE
+		if(!in_range(M, src))
+			return FALSE
+		if(!M.restrained(TRUE) && !M.incapacitated(FALSE, TRUE))
+			to_chat(user, span_warning("[M] needs to be incapacitated or chained!"))
+			return FALSE
+		if(M.buckled || M.anchored)
+			return FALSE
+		if(M.loc != loc)
+			var/turf/T = get_turf(src)
+			if(!T)
+				return FALSE
+			M.forceMove(T)
+		if(!buckle_mob(M, FALSE, FALSE))
+			return FALSE
+		M.visible_message(span_warning("[user] hoists [M] onto [src]!"),\
+			span_warning("[user] hoists me onto [src]!"))
+		return TRUE
+
 	var/datum/component/riding/riding_datum = GetComponent(/datum/component/riding/no_ocean)
 	if(!riding_datum)
 		return
@@ -998,6 +1029,26 @@ GLOBAL_VAR_INIT(farm_animals, FALSE)
 
 /mob/living/simple_animal/hostile
 	var/do_footstep = FALSE
+
+/mob/living/simple_animal/hostile/proc/dismount_incap()
+	if(!has_buckled_mobs())
+		return
+	if(LAZYLEN(buckled_mobs) != 1)
+		return
+	var/mob/living/L = buckled_mobs[1]
+	if(!istype(L))
+		return
+	if(!L.restrained(TRUE) && !L.incapacitated(FALSE, TRUE))
+		return
+	unbuckle_mob(L, TRUE)
+
+/mob/living/simple_animal/hostile/post_buckle_mob(mob/living/M)
+	. = ..()
+	dismount_incap()
+
+/mob/living/simple_animal/hostile/post_unbuckle_mob(mob/living/M)
+	. = ..()
+	dismount_incap()
 
 /mob/living/simple_animal/hostile/relaymove(mob/user, direction)
 	if (stat == DEAD)
