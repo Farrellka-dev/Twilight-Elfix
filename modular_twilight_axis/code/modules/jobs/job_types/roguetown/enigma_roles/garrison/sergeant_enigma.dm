@@ -137,7 +137,7 @@
 				H.adjust_skillrank_up_to(/datum/skill/combat/polearms, 5, TRUE)
 				H.change_stat(STATKEY_STR, 1)
 			if("Longsword & Crossbow")
-				beltl = /obj/item/quiver/bolts
+				beltl = /obj/item/quiver/bolt/standard
 				backl = /obj/item/gun/ballistic/revolver/grenadelauncher/crossbow
 				r_hand = /obj/item/rogueweapon/sword/long
 				l_hand = /obj/item/rogueweapon/scabbard/sword

@@ -1056,6 +1056,9 @@
 	if(!isnull(trait_exam))
 		. += trait_exam
 
+	if(pose_text)
+		. += fieldset_block("Pose", pose_text, "pose_block")
+
 	SEND_SIGNAL(src, COMSIG_PARENT_EXAMINE, user, .)
 
 /mob/living/proc/status_effect_examines(pronoun_replacement) //You can include this in any mob's examine() to show the examine texts of status effects!
