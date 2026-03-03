@@ -3057,6 +3057,14 @@
 /obj/structure/table/wood{
 	icon_state = "tablewood1"
 	},
+/obj/item/branding_iron{
+	pixel_x = -5;
+	pixel_y = 6
+	},
+/obj/item/branding_letters{
+	pixel_x = 7;
+	pixel_y = -6
+	},
 /turf/open/floor/rogue/cobble,
 /area/rogue/indoors/vampire_manor)
 "sh" = (
