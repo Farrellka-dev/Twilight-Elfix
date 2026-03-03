@@ -7,10 +7,10 @@
 
 /datum/advclass/wretch/thehero
 	name = "Undead Warrior"
-	tutorial = "You're a shkeleton! You already forget how you got all these bones. You're are a hero of your own story, where all fears you"
+	tutorial = "You're a shkeleton! You already forget how you got all these bones, but people fears you, they want to dig you down. Do it first."
 	outfit = /datum/outfit/job/roguetown/wretch/hero
 	category_tags = list(CTAG_WRETCH)
-	min_pq = 30
+	min_pq = 30				//better RP?
 	maximum_possible_slots = 3
 	extra_context = "You're a SKELETON, be ready to shackle your bones. Minimum PQ Required: 30"
 	traits_applied = list(
@@ -127,3 +127,5 @@
 		var/obj/item/rogueweapon/greatsword/grenz/flamberge/paalloy/W = new(get_turf(H))
 		if(!H.put_in_hands(W))
 			W.forceMove(get_turf(H))
+
+						//no castifico, you're a fucking skeleton. Life already punched you
