@@ -46,7 +46,6 @@
 		/datum/advclass/wretch/munitioneer,
 		/datum/advclass/wretch/pariah,
 		/datum/advclass/wretch/zizite_spellblade,
-		/datum/advclass/wretch/blackoakwyrm,
 		/datum/advclass/wretch/munitioneer,
 
 		/datum/advclass/wretch/twilight_corsair,
