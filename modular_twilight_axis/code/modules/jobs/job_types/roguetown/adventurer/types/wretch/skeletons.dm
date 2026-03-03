@@ -1,3 +1,10 @@
+/obj/item/clothing/head/roguetown/duelhat/pretzel/skelet
+	name = "old rebel's hat"
+	max_integrity = 100
+	armor = ARMOR_SPELLSINGER
+	body_parts_covered = HEAD|HAIR|EARS
+	prevent_crits = list(BCLASS_CUT, BCLASS_BLUNT, BCLASS_TWIST)
+
 /datum/advclass/wretch/thehero
 	name = "Undead Warrior"
 	tutorial = "You're a shkeleton! You already forget how you got all these bones. You're are a hero of your own story, where all fears you"
@@ -13,7 +20,7 @@
 		TRAIT_TOXIMMUNE, 
 		TRAIT_NOSLEEP, 
 		TRAIT_SHOCKIMMUNE, 
-		TRAIT_SILVER_WEAK, 
+		TRAIT_SILVER_WEAK
 	)
 
 	subclass_skills = list(
@@ -42,13 +49,14 @@
 	H.update_body()
 	H.update_hair()
 	H.update_body_parts(redraw = TRUE)
+	H.dna.species.soundpack_m = new /datum/voicepack/skeleton()
+	H.dna.species.soundpack_f = new /datum/voicepack/skeleton()
 
 /datum/outfit/job/roguetown/wretch/hero/pre_equip(mob/living/carbon/human/H)
 	..()
 	H.adjust_blindness(-3)
 	H.STAINT = 5			//Clever shkelet
 	skelet(H)
-	H.dna.species.soundpack_m = new /datum/voicepack/skeleton()
 	backpack_contents = list(
 		/obj/item/recipe_book/survival = 1,
 		/obj/item/repair_kit/metal/bad = 2,
@@ -59,7 +67,7 @@
 	var/classchoice = input("Choose your archetypes", "Available archetypes") as anything in classes
 
 	switch(classchoice)
-		if("Warrior")
+		if("Krieger")
 			ADD_TRAIT(H, TRAIT_HEAVYARMOR, TRAIT_GENERIC)
 			H.adjust_skillrank(/datum/skill/combat/swords, 3, TRUE)
 			head = /obj/item/clothing/head/roguetown/roguehood/red
@@ -89,13 +97,13 @@
 			pants = /obj/item/clothing/under/roguetown/trou/leather
 			shoes = /obj/item/clothing/shoes/roguetown/boots/leather/reinforced
 			belt = /obj/item/storage/belt/rogue/leather
-			beltl = /obj/item/quiver/bolts
+			beltl = /obj/item/quiver/bolt/standard
 			beltr = /obj/item/rogueweapon/mace/cudgel
 		if("Toter Aufrührer")
 			ADD_TRAIT(H, TRAIT_DODGEEXPERT, TRAIT_GENERIC)
 			H.adjust_skillrank(/datum/skill/combat/twilight_firearms, 2, TRUE)
 			H.adjust_skillrank(/datum/skill/combat/unarmed, 3, TRUE)
-			head = /obj/item/clothing/head/roguetown/duelhat/pretzel
+			head = /obj/item/clothing/head/roguetown/duelhat/pretzel/skelet
 			backl = /obj/item/storage/backpack/rogue/satchel
 			neck = /obj/item/quiver/twilight_bullet/lead_ten
 			shirt = /obj/item/clothing/suit/roguetown/shirt/freifechter
@@ -107,7 +115,12 @@
 			belt = /obj/item/storage/belt/rogue/leather/double
 			beltl = /obj/item/gun/ballistic/twilight_firearm/arquebus_pistol
 			beltr = /obj/item/rogueweapon/knuckles/paknuckles
-
+			backpack_contents = list(
+				/obj/item/recipe_book/survival = 1,
+				/obj/item/rogueweapon/huntingknife/idagger = 1,
+				/obj/item/rogueweapon/scabbard/sheath = 1,
+				/obj/item/twilight_powderflask
+			)
 /datum/outfit/job/roguetown/wretch/hero/post_equip(mob/living/carbon/human/H)
 	..()
 	if(HAS_TRAIT(H, TRAIT_HEAVYARMOR))
