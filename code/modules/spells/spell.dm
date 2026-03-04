@@ -347,6 +347,10 @@ GLOBAL_LIST_INIT(spells, typesof(/obj/effect/proc_holder/spell)) //needed for th
 		to_chat(user, span_warning("[name] cannot be cast unless I am completely manifested in the material plane!"))
 		return FALSE
 
+	if(istype(user, /mob/living/carbon/human/species/wildshape)) //TA EDIT
+		if(is_type_in_list(src, GLOB.learnable_spells))
+			return FALSE
+	
 	if(ishuman(user))
 		var/mob/living/carbon/human/H = user
 		if((invocation_type == "whisper" || invocation_type == "shout") && (!H.can_speak_vocal() || !H.getorganslot(ORGAN_SLOT_TONGUE)))
@@ -805,6 +809,10 @@ GLOBAL_LIST_INIT(spells, typesof(/obj/effect/proc_holder/spell)) //needed for th
 	if(user.stat && !stat_allowed)
 		return FALSE
 
+	if(istype(user, /mob/living/carbon/human/species/wildshape)) //TA EDIT
+		if(is_type_in_list(src, GLOB.learnable_spells))
+			return FALSE
+	
 	if(!ignore_cockblock && HAS_TRAIT(user, TRAIT_SPELLCOCKBLOCK))
 		return FALSE
 
