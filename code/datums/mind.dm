@@ -380,10 +380,10 @@ GLOBAL_LIST_EMPTY(personal_objective_minds)
 	last_death = world.time
 
 /datum/mind/proc/store_memory(new_text)
-	var/newlength = length(memory) + length(new_text)
-	if (newlength > MAX_MESSAGE_LEN * 100)
-		memory = copytext(memory, -newlength-MAX_MESSAGE_LEN * 100)
 	memory += "[new_text]<BR>"
+	var/limit = MAX_MESSAGE_LEN * 100
+	if (length_char(memory) > limit)
+		memory = copytext_char(memory, -limit)
 
 /datum/mind/proc/wipe_memory()
 	memory = null
@@ -476,7 +476,8 @@ GLOBAL_LIST_EMPTY(personal_objective_minds)
 /datum/mind/proc/show_memory(mob/recipient, window=1)
 	if(!recipient)
 		recipient = current
-	var/output = "<B>[current.real_name]'s Memories:</B><br>"
+	var/output = "<html><head><meta http-equiv='Content-Type' content='text/html; charset=utf-8'></head><body>"
+	output += "<B>[current.real_name]'s Memories:</B><br>"
 	output += memory
 
 	if(personal_objectives.len)
@@ -500,6 +501,7 @@ GLOBAL_LIST_EMPTY(personal_objective_minds)
 			antag_obj_count++
 
 	if(window)
+		output += "</body></html>"
 		recipient << browse(output,"window=memory")
 	else if(all_objectives.len || memory || personal_objectives.len)
 		to_chat(recipient, "<i>[output]</i>")
@@ -508,7 +510,7 @@ GLOBAL_LIST_EMPTY(personal_objective_minds)
 /datum/mind/proc/recall_targets(mob/recipient, window=1)
 	var/output = "<B>[recipient.real_name]'s Hitlist:</B><br>"
 	for(var/mob/living/carbon in GLOB.mob_living_list) // Iterate through all mobs in the world
-		if((carbon.real_name != recipient.real_name) && ((carbon.has_flaw(/datum/charflaw/hunted)) && (!istype(carbon, /mob/living/carbon/human/dummy))))//To be on the list they must be hunted, not be the user and not be a dummy (There is a dummy that has all vices for some reason)
+		if((carbon.real_name != recipient.real_name) && ((carbon.has_flaw(/datum/charflaw/hunted)) || HAS_TRAIT(carbon, TRAIT_ZIZOID_HUNTED) && (!istype(carbon, /mob/living/carbon/human/dummy))))//To be on the list they must be hunted, not be the user and not be a dummy (There is a dummy that has all vices for some reason)
 			output += "<br>[carbon.real_name]"
 			output += "<br>[carbon.real_name]"
 			if (carbon.job)
@@ -790,19 +792,19 @@ GLOBAL_LIST_EMPTY(personal_objective_minds)
 			if(used < spell_point_pools[pool_name])
 				has_remaining = TRUE
 				break
-		if(has_remaining && !has_spell(/obj/effect/proc_holder/spell/self/learnspell))
-			AddSpell(new /obj/effect/proc_holder/spell/self/learnspell(null))
+		if(has_remaining && !has_spell(/obj/effect/proc_holder/spell/self/library))
+			AddSpell(new /obj/effect/proc_holder/spell/self/library(null))
 		else if(!has_remaining)
-			RemoveSpell(/obj/effect/proc_holder/spell/self/learnspell)
+			RemoveSpell(/obj/effect/proc_holder/spell/self/library)
 		return
 
 	if(!has_spell(/obj/effect/proc_holder/spell/self/learnspell))
 		if((spell_points - used_spell_points) > 0)
-			AddSpell(new /obj/effect/proc_holder/spell/self/learnspell(null))
+			AddSpell(new /obj/effect/proc_holder/spell/self/library(null))
 			return
 
 	if((spell_points - used_spell_points) <= 0)
-		RemoveSpell(/obj/effect/proc_holder/spell/self/learnspell)
+		RemoveSpell(/obj/effect/proc_holder/spell/self/library)
 		return
 	return
 
@@ -980,7 +982,7 @@ GLOBAL_LIST_EMPTY(personal_objective_minds)
 		qdel(O)
 	personal_objectives.Cut()
 
-/proc/handle_special_items_retrieval(mob/user, atom/host_object)
+/* /proc/handle_special_items_retrieval(mob/user, atom/host_object)
 	// Attempts to retrieve an item from a player's stash, and applies any base colors, where preferable.
 	if(user.mind && isliving(user))
 		if(user.mind.special_items && user.mind.special_items.len)
@@ -992,24 +994,7 @@ GLOBAL_LIST_EMPTY(personal_objective_minds)
 						user.mind.special_items -= item
 						var/obj/item/I = new path2item(user.loc)
 						user.put_in_hands(I)
-						// Apply loadout-specific properties only if this is a loadout item
-						var/list/metadata = user.client?.prefs?.gear_list?[item]
-						if(islist(metadata))
-							// Free loadout items cannot be sold, smelted, or salvaged (triumph items are exempt)
-							var/datum/loadout_item/LI = GLOB.loadout_items_by_name[item]
-							if(!LI?.triumph_cost)
-								I.sellprice = 0
-								I.smeltresult = null
-								I.salvage_result = null
-							// Apply metadata (color, custom name, custom desc)
-							if(metadata["color"])
-								I.add_atom_colour(metadata["color"], FIXED_COLOUR_PRIORITY)
-							if(metadata["detail_color"] && I.detail_tag)
-								I.detail_color = metadata["detail_color"]
-							if(metadata["altdetail_color"] && I.altdetail_tag)
-								I.altdetail_color = metadata["altdetail_color"]
-							if(metadata["custom_name"])
-								I.name = metadata["custom_name"]
-							if(metadata["custom_desc"])
-								I.desc = metadata["custom_desc"]
-							I.update_icon()
+						if (istype(I, /obj/item/clothing)) // commit any pref dyes to our item if it is clothing and we have them available
+							var/dye = user.client?.prefs.resolve_loadout_to_color(path2item)
+							if (dye)
+								I.add_atom_colour(dye, FIXED_COLOUR_PRIORITY) */

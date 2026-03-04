@@ -196,9 +196,9 @@
 		SStreasury.give_money_account(ECONOMIC_LOWER_MIDDLE_CLASS, H, "Savings.")
 
 /datum/advclass/wapprentice/spellblade
-	name = "Azurcaephan Associate"
+	name = "Magician Practice"
 	maximum_possible_slots = 2
-	tutorial = "You are an Azurcaephan Associate — a Spellblade, carrier of the five hundred yils tradition \
+	tutorial = "You are an Magician Practice — a Spellblade, carrier of the five hundred yils tradition \
 		originating in Azurea. You are employed under the University \
 		as a fellow Magos. The arcyne arts are dangerous, \
 		and you are to protect your peers from their own recklessness. \
