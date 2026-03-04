@@ -125,14 +125,16 @@
 		return
 
 	var/amt = ""
-	amt = input("Message:", "Please enter the amount of PQ to add/remove:") as num|null
+	var/reason = ""
+	var/prompt = "Please enter the amount of PQ to add/remove:"
+
+	amt = input("Message:", prompt) as num|null
 
 	if(!amt)
 		return
 
 	prompt = "Please specify a reason for the adjustment:"
 	reason = input("Message:", prompt) as text|null
-
 	if(!reason)
 		reason = "Player Panel Adjustment"
 
@@ -140,7 +142,7 @@
 
 	//Admin log happens in child proc
 	SSblackbox.record_feedback("tally", "admin_verb", 1, "Modify Player Quality") //If you are copy-pasting this, ensure the 2nd parameter is unique to the new proc!
-cmd_admin_mod_pq
+
 /client/proc/cmd_admin_world_narrate()
 	set category = "-Special Verbs-"
 	set name = "Narrate - Global"
