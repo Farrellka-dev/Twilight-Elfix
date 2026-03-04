@@ -18,9 +18,9 @@
 		TRAIT_NOBREATH, 
 		TRAIT_NOPAIN, 
 		TRAIT_TOXIMMUNE, 
-		TRAIT_NOSLEEP, 
 		TRAIT_SHOCKIMMUNE, 
-		TRAIT_SILVER_WEAK
+		TRAIT_SILVER_WEAK,
+		TRAIT_BREADY
 	)
 
 	subclass_skills = list(
@@ -36,6 +36,7 @@
 	H.hairstyle = "Bald"
 	H.facial_hairstyle = "Shaved"
 	ADD_TRAIT(H, TRAIT_LIMBATTACHMENT, TRAIT_GENERIC)
+	ADD_TRAIT(H, TRAIT_NOLIMBDISABLE, TRAIT_GENERIC)
 	H.dna.species.species_traits |= NOBLOOD
 	H.mob_biotypes = MOB_UNDEAD
 	for(var/obj/item/bodypart/B in H.bodyparts)
@@ -121,6 +122,7 @@
 				/obj/item/rogueweapon/scabbard/sheath = 1,
 				/obj/item/twilight_powderflask
 			)
+
 /datum/outfit/job/roguetown/wretch/hero/post_equip(mob/living/carbon/human/H)
 	..()
 	if(HAS_TRAIT(H, TRAIT_HEAVYARMOR))
@@ -128,4 +130,4 @@
 		if(!H.put_in_hands(W))
 			W.forceMove(get_turf(H))
 
-						//no castifico, you're a fucking skeleton. Life already punched you
+		//no castifico, you're a fucking skeleton. Life already punched you
