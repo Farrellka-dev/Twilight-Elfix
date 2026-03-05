@@ -96,4 +96,3 @@
 	shortname = "Lich"
 	credits = "Sefus - Herald of HER will"
 	musicpath = list('modular_twilight_axis/sound/music/combat_lich.ogg')
-
