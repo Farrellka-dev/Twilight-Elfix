@@ -27,7 +27,7 @@
 /datum/component/trophy_hunter/proc/on_item_equipped(mob/user, obj/item/I, slot)
 	if(!istype(I, /obj/item/storage/hip/headhook))
 		return
-	if(slot != ITEM_SLOT_HIP)
+	if(!(slot == SLOT_BELT_L || slot == SLOT_BELT_R))
 		return
 
 	set_active_hook(I)

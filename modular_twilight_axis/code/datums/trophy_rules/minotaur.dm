@@ -12,6 +12,6 @@
 	var/datum/trophy_effect/E = new
 	E.group_id = group_id
 	E.effect_type = TROPHY_EFFECT_STR
-	E.value = 2
+	E.value = 1
 	E.message = "You feel the crushing strength of the minotaur flow into your limbs."
 	return E

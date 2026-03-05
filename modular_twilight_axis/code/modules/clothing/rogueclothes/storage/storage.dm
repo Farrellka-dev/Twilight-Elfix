@@ -17,9 +17,13 @@
 
 /obj/item/storage/hip/headhook/equipped(mob/user, slot, initial)
 	. = ..()
-	if(slot == ITEM_SLOT_HIP)
-		SEND_SIGNAL(src, COMSIG_HEADHOOK_EQUIPPED, user)
+	if(slot == SLOT_BELT_L || slot == SLOT_BELT_R)
+		var/mob/living/carbon/human/carrier = src.loc
+		if(carrier)
+			SEND_SIGNAL(carrier, COMSIG_HEADHOOK_EQUIPPED, user)
 
 /obj/item/storage/hip/headhook/dropped(mob/user, silent)
+	var/mob/living/carbon/human/carrier = src.loc
+	if(carrier)
+		SEND_SIGNAL(carrier, COMSIG_HEADHOOK_UNEQUIPPED, user)
 	. = ..()
-	SEND_SIGNAL(src, COMSIG_HEADHOOK_UNEQUIPPED, user)
