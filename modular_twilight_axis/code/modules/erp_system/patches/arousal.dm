@@ -807,8 +807,15 @@
 	if(!empty && after_empty)
 		to_chat(parent, span_notice("I'm spent!"))
 
+/datum/component/arousal/is_spent()
+	if(charge < get_charge_cost_for_climax())
+		return TRUE
+	return FALSE
+
 /datum/component/arousal/proc/is_nympho_sp_floor_active()
 	return is_lovefiend() && (world.time < nympho_sp_floor_until)
+
+
 
 /datum/component/arousal/get_force_pleasure_multiplier(passed_force, giving)
 	switch(passed_force)
