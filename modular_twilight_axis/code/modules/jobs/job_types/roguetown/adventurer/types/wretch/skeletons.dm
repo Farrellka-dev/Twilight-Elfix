@@ -7,7 +7,7 @@
 
 /datum/advclass/wretch/thehero
 	name = "Undead Warrior"
-	tutorial = "You're a shkeleton! You already forget how you got all these bones, but people fears you, they want to dig you down. Do it first."
+	tutorial = "You're a shkeleton! You already forgot how you got all these bones, but people fears you, they want to dig you down. Do it first."
 	outfit = /datum/outfit/job/roguetown/wretch/hero
 	category_tags = list(CTAG_WRETCH)
 	min_pq = 30				//better RP?
@@ -20,7 +20,8 @@
 		TRAIT_TOXIMMUNE, 
 		TRAIT_SHOCKIMMUNE, 
 		TRAIT_SILVER_WEAK,
-		TRAIT_BREADY
+		TRAIT_BREADY,
+		TRAIT_NOSLEEP
 	)
 
 	subclass_skills = list(
@@ -50,8 +51,10 @@
 	H.update_body()
 	H.update_hair()
 	H.update_body_parts(redraw = TRUE)
-	H.dna.species.soundpack_m = new /datum/voicepack/skeleton()
-	H.dna.species.soundpack_f = new /datum/voicepack/skeleton()
+	for(var/datum/charflaw/cf in H.charflaws)
+		H.charflaws.Remove(cf)
+		QDEL_NULL(cf)
+
 
 /datum/outfit/job/roguetown/wretch/hero/pre_equip(mob/living/carbon/human/H)
 	..()
@@ -70,7 +73,7 @@
 	switch(classchoice)
 		if("Krieger")
 			ADD_TRAIT(H, TRAIT_HEAVYARMOR, TRAIT_GENERIC)
-			H.adjust_skillrank(/datum/skill/combat/swords, 3, TRUE)
+			H.adjust_skillrank(/datum/skill/combat/swords, 4, TRUE)
 			head = /obj/item/clothing/head/roguetown/roguehood/red
 			backl = /obj/item/storage/backpack/rogue/satchel
 			cloak = /obj/item/clothing/cloak/tabard
@@ -78,6 +81,7 @@
 			armor = /obj/item/clothing/suit/roguetown/armor/plate/full/iron
 			shirt = /obj/item/clothing/suit/roguetown/armor/gambeson/heavy
 			wrists = /obj/item/clothing/wrists/roguetown/bracers/iron
+			gloves = /obj/item/clothing/gloves/roguetown/plate/iron
 			pants = /obj/item/clothing/under/roguetown/chainlegs/iron/kilt
 			shoes = /obj/item/clothing/shoes/roguetown/boots/armor/iron
 			belt = /obj/item/storage/belt/rogue/leather/battleskirt/black
@@ -129,5 +133,6 @@
 		var/obj/item/rogueweapon/greatsword/grenz/flamberge/paalloy/W = new(get_turf(H))
 		if(!H.put_in_hands(W))
 			W.forceMove(get_turf(H))
-
+	H.dna.species.soundpack_m = new /datum/voicepack/skeleton()
+	H.dna.species.soundpack_f = new /datum/voicepack/skeleton()
 		//no castifico, you're a fucking skeleton. Life already punched you
