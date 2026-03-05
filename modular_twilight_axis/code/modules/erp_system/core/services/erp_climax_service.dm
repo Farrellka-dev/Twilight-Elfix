@@ -15,9 +15,18 @@
 	if(!istype(who))
 		return
 
+	var/datum/component/arousal/A = who.GetComponent(/datum/component/arousal)
+	if(A)
+		if(A.erp_last_climax_fx_time && (world.time - A.erp_last_climax_fx_time) <= 2)
+			return
+		A.erp_last_climax_fx_time = world.time
+
+	var/list/active_raw = list()
+	SEND_SIGNAL(who, COMSIG_ERP_GET_LINKS, active_raw)
+
 	var/list/active = list()
-	if(controller.links && controller.links.len)
-		for(var/datum/erp_sex_link/L in controller.links)
+	if(active_raw && active_raw.len)
+		for(var/datum/erp_sex_link/L in active_raw)
 			if(L && !QDELETED(L) && L.is_valid())
 				active += L
 
@@ -61,7 +70,6 @@
 			who.emote("sexmoanhvy", forced = TRUE)
 		who.playsound_local(who, 'sound/misc/mat/end.ogg', 100)
 
-	var/datum/component/arousal/A = who.GetComponent(/datum/component/arousal)
 	A?.spread_chain_orgasm(who)
 	var/mob/living/carbon/human/partner = null
 	if(best)

@@ -11,6 +11,7 @@
 	var/tmp/chain_lock_until = 0
 	var/last_overload_sleep_decay_time = 0
 	var/tmp/nympho_sp_floor_until = 0
+	var/erp_last_climax_fx_time = 0
 
 /datum/component/arousal/RegisterWithParent()
 	. = ..()
