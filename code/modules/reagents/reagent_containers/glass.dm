@@ -9,6 +9,32 @@
 	spillable = TRUE
 	possible_item_intents = list(INTENT_POUR, /datum/intent/fill, INTENT_SPLASH, INTENT_GENERIC)
 	resistance_flags = ACID_PROOF
+	var/is_infinite = FALSE
+
+/obj/item/reagent_containers/glass/get_mechanics_examine(mob/user)
+	. = ..()
+	. += span_info("Right click on someone to offer your glass to them. If someone else offers a glass to you in response, they'll clink together in celebration!")
+
+/obj/item/reagent_containers/glass/examine(mob/user)
+	. = ..()
+	if(user.mind && ishuman(user))
+		var/mob/living/carbon/human/H = user
+		if(!H.patron || !istype(H.patron, /datum/patron/inhumen/baotha))
+			return
+		if(is_infinite)
+			. += span_notice("It's been touched by the Lady... it won't run dry, for now.")
+/obj/item/reagent_containers/glass/proc/reset_infinite()
+	is_infinite = FALSE
+
+/obj/item/reagent_containers/glass/proc/set_infinite(mob/user, delay)
+	if(is_infinite)
+		to_chat(user, span_info("It's already blessed to never run out!"))
+		return FALSE
+	else
+		is_infinite = TRUE
+		var/timer = (delay ? delay : 60 SECONDS)
+		addtimer(CALLBACK(src, PROC_REF(reset_infinite)), timer)
+		return TRUE
 
 /datum/intent/fill
 	name = "fill"
@@ -198,6 +224,23 @@
 				onfill(E, user, silent = FALSE)
 				qdel(E)
 			return
+
+	if(istype(I, /obj/item/natural/cloth))
+		var/obj/item/natural/cloth/T = I
+		if(T.wet >= 10)
+			to_chat(user, span_warning("[T] is already soaked!"))
+			return
+		var/removereg = /datum/reagent/water
+		if(!reagents.has_reagent(/datum/reagent/water, 5))
+			removereg = /datum/reagent/water/gross
+			if(!reagents.has_reagent(/datum/reagent/water/gross, 5))
+				to_chat(user, span_warning("There's not enough water to soak [T] in."))
+				return
+		wash_atom(T)
+		playsound(src, pick('sound/foley/waterwash (1).ogg','sound/foley/waterwash (2).ogg'), 100, FALSE)
+		reagents.remove_reagent(removereg, 5)
+		user.visible_message(span_info("[user] soaks [T] in [src]."), span_info("I soak [T] in [src]."))
+		return
 	..()
 
 // Called whenever this container is successfully filled via the target.

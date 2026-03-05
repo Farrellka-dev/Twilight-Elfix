@@ -1,3 +1,9 @@
+#define MIN_BULLET_RANGE		0
+#define MAX_BULLET_RANGE		20 // overriden by firearm in all cases, besides runelock
+
+#define AP_FALLOFF_BULLET		0.5
+#define DMG_FALLOFF_BULLET		0.5
+
 /obj/projectile/bullet
 	var/silver = FALSE
 	var/blessed = FALSE
@@ -5,13 +11,21 @@
 	var/gunpowder_npc_critfactor = 1
 	var/gunpowder
 
+	min_range = MIN_BULLET_RANGE
+	max_range = MAX_BULLET_RANGE
+	dam_falloff_factor = DMG_FALLOFF_BULLET
+	ap_falloff_factor = AP_FALLOFF_BULLET
+
+/obj/item/ammo_casing
+	var/obj/item/quiver/twilight_bullet/runicbag/linked_bag = null
+
 /**
  * Generic ammo used by handgonnes and arquebuses
  */
 /obj/projectile/bullet/twilight_lead
 	name = "lead sphere"
 	desc = "Небольшая свинцовая сфера. Хорошо сочетается с порохом."
-	damage = 70
+	damage = 140
 	damage_type = BRUTE
 	icon = 'modular_twilight_axis/firearms/icons/ammo.dmi'
 	icon_state = "musketball_proj"
@@ -21,22 +35,22 @@
 	embedchance = 100
 	woundclass = BCLASS_STAB
 	flag = "stab"
-	armor_penetration = 42
+	armor_penetration = 84
 	speed = 0.1
 
 /obj/projectile/bullet/twilight_lead/silver
 	name = "silver sphere"
 	desc = "Небольшая серебряная сфера. Мягче, чем свинцовая пуля, но крайне эффективна против нежити."
 	ammo_type = /obj/item/ammo_casing/caseless/twilight_lead/silver
-	damage = 60
-	armor_penetration = 35
+	damage = 120
+	armor_penetration = 70
 	silver = TRUE
 	critfactor = 0.8
 
 /obj/projectile/bullet/twilight_cannonball
 	name = "cannonball"
 	desc = "Крупная свинцовая сфера. Важен не размер ствола, а размер отверстия, что он делает в вашем противнике."
-	damage = 60
+	damage = 120
 	damage_type = BRUTE
 	icon = 'modular_twilight_axis/firearms/icons/ammo.dmi'
 	icon_state = "musketball_proj"
@@ -46,13 +60,13 @@
 	embedchance = 0
 	woundclass = BCLASS_STAB
 	flag = "blunt"
-	armor_penetration = 5
+	armor_penetration = 10
 	speed = 0.1
 
 /obj/projectile/bullet/twilight_grapeshot
 	name = "grapeshot"
 	desc = "Плотно упакованный в бумагу набор небольших металлических шариков. Хорошо сочетается с порохом."
-	damage = 20
+	damage = 30 // я уже не помню, как оно было до ввода эффективного ренжа, но мне ссыкотно от мысли в 240 базового урона до применения мода от персы. 180 выглядит баланснее.
 	damage_type = BRUTE
 	icon = 'modular_twilight_axis/firearms/icons/ammo.dmi'
 	icon_state = "musketball_proj"
@@ -62,7 +76,7 @@
 	embedchance = 100
 	woundclass = BCLASS_STAB
 	flag = "stab"
-	armor_penetration = 42
+	armor_penetration = 84 
 	speed = 0.1
 	critfactor = 0.67
 
@@ -81,12 +95,11 @@
 	icon = 'modular_twilight_axis/firearms/icons/ammo.dmi'
 	icon_state = "musketball_runed"
 	ammo_type = /obj/item/ammo_casing/caseless/twilight_lead/runelock
-	range = 100
+	range = 20
 	hitsound = 'sound/combat/hits/hi_bolt (2).ogg'
 	embedchance = 100
 	woundclass = BCLASS_STAB
 	flag = "piercing"
-	var/linked_bag
 
 /obj/projectile/bullet/twilight_lead/twilight_runelock/blessed
 	name = "blessed sphere"
@@ -152,20 +165,15 @@
 		critfactor *= gun.critfactor
 		gunpowder_npc_critfactor *= gun.npcdamfactor
 		gunpowder = gun.gunpowder
+		max_range = gun.effective_range
 	..()
 
 /obj/projectile/bullet/on_hit(atom/target, blocked = FALSE)
 	if(isliving(target))
 		var/mob/living/T = target
 		if(istype(fired_from, /obj/item/gun/ballistic/twilight_firearm)) //Double damage in close range
-			var/obj/item/gun/ballistic/twilight_firearm/G = fired_from
-			var/is_within_effective_range = FALSE
-			for(var/mob/M in range(G.effective_range, T))
-				if(M == firer)
-					is_within_effective_range = TRUE
+			var/is_within_effective_range = !check_range(get_turf(target))
 			if(is_within_effective_range)
-				damage *= 2
-				armor_penetration *= 2
 				if(!istype(T.get_inactive_held_item(), /obj/item/rogueweapon/shield) && !istype(T.get_active_held_item(), /obj/item/rogueweapon/shield) && (blocked == 0))
 					switch(gunpowder) //Hande gunpowder types that are BLOCKED by shields and armor
 						if("fyrepowder")
@@ -245,14 +253,6 @@
 			else
 				T.visible_message(span_danger("The [src.name] misses [T] narrowly, grazing them!"), \
 								span_danger("The [src.name] misses me narrowly, grazing me!"), null, COMBAT_MESSAGE_RANGE)
-	if(istype(src, /obj/projectile/bullet/twilight_lead/twilight_runelock))
-		var/turf/T = get_turf(src)
-		var/obj/item/ammo_casing/caseless/twilight_lead/runelock/new_boolet = new ammo_type(T)
-		var/obj/projectile/bullet/twilight_lead/twilight_runelock/R = src
-		if(istype(R.linked_bag, /obj/item/quiver/twilight_bullet/runicbag))
-			var/obj/item/quiver/twilight_bullet/runicbag/bag = R.linked_bag
-			new_boolet.linked_bag = bag
-			bag.linked_ammo += new_boolet
 	. = ..()
 	if(isliving(firer) && (istype(fired_from, /obj/item/gun/ballistic/twilight_firearm) || istype(fired_from, /obj/item/gun/ballistic/revolver/grenadelauncher/twilight_runelock)))
 		var/mob/living/M = firer
@@ -363,13 +363,17 @@
 	possible_item_intents = list(/datum/intent/use)
 	max_integrity = 0
 	w_class = WEIGHT_CLASS_TINY
-	var/linked_bag
 
 /obj/item/ammo_casing/caseless/twilight_lead/runelock/Initialize()
 	. = ..()
 	var/filter = src.get_filter("rune_filter")
 	if(!filter)
 		src.add_filter("rune_filter", 2, list("type" = "outline", "color" = rgb(112, 28, 28, 1), "alpha" = 200, "size" = 2))
+
+/obj/item/ammo_casing/caseless/twilight_lead/runelock/ready_proj(atom/target, mob/living/user, quiet, zone_override = "", atom/fired_from)
+	. = ..()
+	if(linked_bag)
+		linked_bag.linked_ammo_types += type
 
 /obj/item/ammo_casing/caseless/twilight_lead/runelock/equipped(mob/living/user)
 	if(ishuman(user))
@@ -384,16 +388,6 @@
 		user.apply_damage(rand(5,15), BURN)
 		src.forceMove(get_turf(user))
 	..()
-
-/obj/item/ammo_casing/caseless/twilight_lead/runelock/ready_proj(atom/target, mob/living/user, quiet, zone_override = "", atom/fired_from)
-	. = ..()
-	if(istype(linked_bag, /obj/item/quiver/twilight_bullet/runicbag) && istype(BB, /obj/projectile/bullet/twilight_lead/twilight_runelock))
-		var/obj/item/quiver/twilight_bullet/runicbag/bag = linked_bag
-		var/obj/projectile/bullet/twilight_lead/twilight_runelock/new_BB = BB
-		new_BB.linked_bag = bag
-		bag.linked_ammo -= src
-		linked_bag = null
-
 
 /obj/item/ammo_casing/caseless/twilight_lead/silver
 	name = "silver sphere"

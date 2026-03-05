@@ -14,6 +14,7 @@
 		/datum/language/dwarvish,
 		/datum/language/elvish,
 		/datum/language/celestial,
+		/datum/language/raneshi,
 		/datum/language/hellspeak,
 		/datum/language/beast,
 		/datum/language/orcish,
@@ -22,7 +23,8 @@
 		/datum/language/grenzelhoftian,
 		/datum/language/kazengunese,
 		/datum/language/lingyuese,
-		/datum/language/gyedzenese,
+		/datum/language/gyedzenese, //TA EDIT
+		/datum/language/valorian, //TA EDIT
 		/datum/language/otavan,
 		/datum/language/etruscan,
 		/datum/language/gronnic,
