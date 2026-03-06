@@ -183,6 +183,8 @@
 		/obj/item/storage/keyring/vanguard_enigma = 1,
 		/obj/item/rogueweapon/scabbard/sheath = 1,
 		)
+/datum/outfit/job/roguetown/vanguard/archer/pre_equip(mob/living/carbon/human/H)
+	..()
 
 	H.adjust_blindness(-3)
 	if(H.mind)
@@ -191,7 +193,7 @@
 		H.set_blindness(0)
 		switch(weapon_choice)
 			if("Footman archer")
-			ADD_TRAIT(H, TRAIT_MEDIUMARMOR, TRAIT_GENERIC)
+				ADD_TRAIT(H, TRAIT_MEDIUMARMOR, TRAIT_GENERIC)
 				H.change_stat(STATKEY_STR, 1) //Футману силу.
 				H.adjust_skillrank_up_to(/datum/skill/combat/swords, 3, TRUE)
 			if("Light archer")
@@ -202,10 +204,6 @@
 
 	if(H.mind)
 
-/datum/outfit/job/roguetown/vanguard/archer/pre_equip(mob/living/carbon/human/H)
-	..()
-	if(H.mind)
-		SStreasury.give_money_account(ECONOMIC_LOWER_CLASS, H, "Savings.")
 		var/helmets = list(
 		"Volf"		= /obj/item/clothing/head/roguetown/helmet/sallet/warden/wolf,
 		"Ram"		= /obj/item/clothing/head/roguetown/helmet/sallet/warden/goat,
