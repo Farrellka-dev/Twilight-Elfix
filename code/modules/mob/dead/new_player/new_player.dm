@@ -6,7 +6,7 @@ GLOBAL_LIST_INIT(roleplay_readme, world.file2list("strings/rt/rp_prompt.txt"))
 	var/spawning = 0//Referenced when you want to delete the new_player later on in the code.
 	var/topjob = "Hero!"
 	flags_1 = NONE
-
+	hud_type = /datum/hud/new_player
 	invisibility = INVISIBILITY_ABSTRACT
 
 //	hud_type = /datum/hud/new_player
@@ -110,9 +110,6 @@ GLOBAL_LIST_INIT(roleplay_readme, world.file2list("strings/rt/rp_prompt.txt"))
 	popup.set_window_options("can_close=0")
 	popup.set_content(output)
 	popup.open(FALSE)*/
-	if(client)
-		if(client.prefs)
-			client.prefs.ShowChoices(src, 4)
 
 /mob/dead/new_player/Topic(href, href_list[])
 	if(src != usr)
@@ -280,9 +277,6 @@ GLOBAL_LIST_INIT(roleplay_readme, world.file2list("strings/rt/rp_prompt.txt"))
 		var/datum/poll_question/poll = locate(href_list["votepollref"]) in GLOB.polls
 		vote_on_poll_handler(poll, href_list)
 
-	if(href_list["explainreadyupbonus"])
-		to_chat(src, span_smallnotice("Ready up for 20 mammons in a stashed pouch, full hydration, a great meal buff and +1 triumph!"))
-
 
 /mob/dead/new_player/verb/do_rp_prompt()
 	set name = "Lore Primer"
@@ -290,7 +284,7 @@ GLOBAL_LIST_INIT(roleplay_readme, world.file2list("strings/rt/rp_prompt.txt"))
 	var/list/dat = list()
 	dat += GLOB.roleplay_readme
 	if(dat)
-		var/datum/browser/popup = new(src, "Primer", "AZURE PEAK", 460, 550)
+		var/datum/browser/popup = new(src, "Primer", "TWILIGHT AXIS", 460, 550)
 		popup.set_content(dat.Join())
 		popup.open()
 
@@ -509,7 +503,10 @@ GLOBAL_LIST_INIT(roleplay_readme, world.file2list("strings/rt/rp_prompt.txt"))
 			give_madness(humanc, GLOB.curse_of_madness_triggered)
 */
 	GLOB.joined_player_list += character.ckey
+	update_bandits_slots()
 	update_wretch_slots()
+	update_mercenary_slots()
+	update_adventurer_slots()
 /*
 	if(CONFIG_GET(flag/allow_latejoin_antagonists) && humanc)	//Borgs aren't allowed to be antags. Will need to be tweaked if we get true latejoin ais.
 		if(SSshuttle.emergency)
@@ -556,6 +553,8 @@ GLOBAL_LIST_INIT(roleplay_readme, world.file2list("strings/rt/rp_prompt.txt"))
 	omegalist += list(GLOB.courtier_positions)
 	omegalist += list(GLOB.retinue_positions)
 	omegalist += list(GLOB.garrison_positions)
+	omegalist += list(GLOB.citywatch_positions)
+	omegalist += list(GLOB.vanguard_positions)
 	omegalist += list(GLOB.church_positions)
 	omegalist += list(GLOB.burgher_positions)
 	omegalist += list(GLOB.peasant_positions)
@@ -586,13 +585,20 @@ GLOBAL_LIST_INIT(roleplay_readme, world.file2list("strings/rt/rp_prompt.txt"))
 			var/cat_name = ""
 			switch (SSjob.name_occupations[category[1]].department_flag)
 				if (NOBLEMEN)
-					cat_name = "Ducal Family"
+					if(SSmapping.config.map_name == "Rockhill")
+						cat_name = "Royal Family"
+					else
+						cat_name = "Ducal Family"
 				if (COURTIERS)
 					cat_name = "Courtiers"
 				if (RETINUE)
 					cat_name = "Retinue"
 				if (GARRISON)
 					cat_name = "Garrison"
+				if (CITYWATCH)
+					cat_name = "City Watch"
+				if (VANGUARD)
+					cat_name = "Vanguard"
 				if (CHURCHMEN)
 					cat_name = "Churchmen"
 				if (BURGHERS)
