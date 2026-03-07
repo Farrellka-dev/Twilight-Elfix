@@ -10,6 +10,7 @@
 
 	outfit = /datum/outfit/job/roguetown/wretch/lunacyembracer
 	category_tags = list(CTAG_WRETCH)
+	class_select_category = CLASS_CAT_CLERIC
 	extra_context = "Minimum PQ Required: 30"
 	subclass_languages = list(/datum/language/beast)
 
