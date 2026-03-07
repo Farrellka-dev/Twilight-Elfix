@@ -6,13 +6,13 @@
 	var/tmp/table_crawl_passtable_owned = FALSE
 	var/tmp/table_crawl_validating = FALSE
 	var/tmp/table_crawl_restoring = FALSE
+	var/tmp/table_crawl_next_bonk = 0
 
 /mob/living/carbon/human/proc/is_table_crawl_player()
 	return !!mind && !!client
 
 /mob/living/carbon/human/set_resting(rest, silent = TRUE)
-	if(!rest && table_crawl_under_table && get_table_crawl_table())
-		table_crawl_head_bonk()
+	if(!rest && try_table_crawl_head_bonk())
 		rest = TRUE
 
 	. = ..()
@@ -25,16 +25,19 @@
 	refresh_table_crawl()
 
 /mob/living/carbon/human/toggle_rest()
-	if(resting && table_crawl_under_table && get_table_crawl_table())
-		table_crawl_head_bonk()
+	if(resting && try_table_crawl_head_bonk())
 		return
 	return ..()
 
 /mob/living/carbon/human/stand_up()
-	if(table_crawl_under_table && get_table_crawl_table())
-		table_crawl_head_bonk()
+	if(try_table_crawl_head_bonk())
 		return FALSE
 	return ..()
+
+/mob/living/carbon/human/toggle_rogmove_intent(intent, silent = FALSE)
+	. = ..()
+	if(table_crawl_state_enabled)
+		refresh_table_crawl()
 
 /mob/living/carbon/human/proc/enable_table_crawl_state()
 	if(table_crawl_state_enabled)
@@ -61,6 +64,15 @@
 
 /mob/living/carbon/human/proc/can_start_table_crawl()
 	if(!can_table_crawl())
+		return FALSE
+	return resting
+
+/mob/living/carbon/human/proc/can_remain_table_crawl()
+	if(buckled)
+		return FALSE
+	if(mobility_flags & MOBILITY_STAND)
+		return FALSE
+	if(mob_size >= MOB_SIZE_LARGE)
 		return FALSE
 	return resting
 
@@ -175,6 +187,15 @@
 	playsound(sound_source, "genblunt", 100, TRUE)
 	Stun(5 SECONDS)
 
+/mob/living/carbon/human/proc/try_table_crawl_head_bonk()
+	if(!table_crawl_under_table || !get_table_crawl_table())
+		return FALSE
+	if(world.time >= table_crawl_next_bonk)
+		table_crawl_next_bonk = world.time + 1 SECONDS
+		table_crawl_head_bonk()
+	refresh_table_crawl()
+	return TRUE
+
 /mob/living/carbon/human/proc/apply_table_crawl_visual()
 	reset_offsets("structure_climb")
 	layer = TABLE_LAYER - 0.1
@@ -223,7 +244,7 @@
 	if(!table_crawl_under_table)
 		clear_table_crawl_visual()
 		return
-	if(!can_table_crawl() || !get_table_crawl_table())
+	if(!can_remain_table_crawl() || !get_table_crawl_table())
 		table_crawl_under_table = FALSE
 		clear_table_crawl_visual()
 		clear_table_crawl_passtable()
@@ -257,6 +278,7 @@
 	source.table_crawl_pending_entry = FALSE
 	source.table_crawl_under_table = FALSE
 	source.table_crawl_restoring = FALSE
+	source.table_crawl_next_bonk = 0
 	source.clear_table_crawl_passtable()
 	source.clear_table_crawl_visual()
 	return ..()
@@ -267,7 +289,7 @@
 		return NONE
 	if(!source.table_crawl_under_table)
 		return NONE
-	if(source.can_table_crawl())
+	if(source.can_remain_table_crawl())
 		return NONE
 	if(!source.get_table_crawl_table(new_loc))
 		return NONE
