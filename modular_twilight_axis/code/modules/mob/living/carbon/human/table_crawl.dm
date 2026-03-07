@@ -10,17 +10,31 @@
 /mob/living/carbon/human/proc/is_table_crawl_player()
 	return !!mind && !!client
 
-/mob/living/carbon/human/on_lying_down(new_lying_angle)
-	. = ..()
-	if(is_table_crawl_player())
-		enable_table_crawl_state()
+/mob/living/carbon/human/set_resting(rest, silent = TRUE)
+	if(!rest && table_crawl_under_table && get_table_crawl_table())
+		table_crawl_head_bonk()
+		rest = TRUE
 
-/mob/living/carbon/human/on_standing_up()
 	. = ..()
-	if(table_crawl_under_table || table_crawl_pending_entry)
-		return
-	if(table_crawl_state_enabled)
+
+	if(resting && is_table_crawl_player())
+		enable_table_crawl_state()
+	else if(table_crawl_state_enabled && !table_crawl_under_table && !table_crawl_pending_entry)
 		disable_table_crawl_state()
+
+	refresh_table_crawl()
+
+/mob/living/carbon/human/toggle_rest()
+	if(resting && table_crawl_under_table && get_table_crawl_table())
+		table_crawl_head_bonk()
+		return
+	return ..()
+
+/mob/living/carbon/human/stand_up()
+	if(table_crawl_under_table && get_table_crawl_table())
+		table_crawl_head_bonk()
+		return FALSE
+	return ..()
 
 /mob/living/carbon/human/proc/enable_table_crawl_state()
 	if(table_crawl_state_enabled)
@@ -37,7 +51,7 @@
 /mob/living/carbon/human/proc/can_table_crawl()
 	if(buckled)
 		return FALSE
-	if(body_position != LYING_DOWN)
+	if(mobility_flags & MOBILITY_STAND)
 		return FALSE
 	if(m_intent != MOVE_INTENT_SNEAK)
 		return FALSE
@@ -112,7 +126,7 @@
 		return
 	if(table_crawl_pending_entry || table_crawl_under_table)
 		return
-	if(table_crawl_attempting || DOING_INTERACTION(src, "table_crawl") || doing())
+	if(table_crawl_attempting || doing)
 		return
 	if(!can_finish_table_crawl(target_table, target_turf))
 		return
@@ -130,7 +144,7 @@
 
 	var/crawl_delay = get_table_crawl_delay(target_table)
 	visible_message(span_warning("[src] starts to crawl under [target_table]."), span_warning("You start to crawl under [target_table]..."))
-	if(crawl_delay && !do_after(src, crawl_delay, target_table, timed_action_flags = IGNORE_USER_DIR_CHANGE, extra_checks = CALLBACK(src, TYPE_PROC_REF(/mob/living/carbon/human, can_finish_table_crawl), target_table, target_turf), interaction_key = "table_crawl"))
+	if(crawl_delay && !do_after(src, crawl_delay, target = target_table, extra_checks = CALLBACK(src, TYPE_PROC_REF(/mob/living/carbon/human, can_finish_table_crawl), target_table, target_turf)))
 		table_crawl_attempting = FALSE
 		return
 
@@ -185,9 +199,9 @@
 	table_crawl_restoring = FALSE
 	if(QDELETED(src) || !table_crawl_under_table)
 		return
-	if(resting && body_position == LYING_DOWN)
+	if(resting && !(mobility_flags & MOBILITY_STAND))
 		return
-	set_resting(TRUE, TRUE, TRUE)
+	set_resting(TRUE, TRUE)
 
 /mob/living/carbon/human/proc/clear_table_crawl_visual()
 	var/obj/structure/table/table = get_table_crawl_table()
@@ -196,7 +210,7 @@
 	else
 		reset_offsets("structure_climb")
 
-	if(body_position == LYING_DOWN)
+	if(!(mobility_flags & MOBILITY_STAND))
 		layer = LYING_MOB_LAYER
 	else
 		layer = initial(layer)
@@ -232,18 +246,12 @@
 	RegisterSignal(target, COMSIG_MOVABLE_PRE_MOVE, PROC_REF(on_pre_move))
 	RegisterSignal(target, COMSIG_MOVABLE_MOVED, PROC_REF(on_moved))
 	RegisterSignal(target, COMSIG_MOVABLE_BUMP, PROC_REF(on_bump))
-	RegisterSignal(target, COMSIG_LIVING_SET_RESTING, PROC_REF(on_resting_change))
-	RegisterSignal(target, COMSIG_LIVING_SET_BODY_POSITION, PROC_REF(on_body_position_change))
-	RegisterSignal(target, COMSIG_LIVING_SET_BUCKLED, PROC_REF(on_buckled_change))
 
 /datum/element/table_crawl/Detach(mob/living/carbon/human/source, ...)
 	UnregisterSignal(source, list(
 		COMSIG_MOVABLE_PRE_MOVE,
 		COMSIG_MOVABLE_MOVED,
 		COMSIG_MOVABLE_BUMP,
-		COMSIG_LIVING_SET_RESTING,
-		COMSIG_LIVING_SET_BODY_POSITION,
-		COMSIG_LIVING_SET_BUCKLED,
 	))
 	source.table_crawl_attempting = FALSE
 	source.table_crawl_pending_entry = FALSE
@@ -286,23 +294,4 @@
 			source.table_crawl_under_table = TRUE
 			source.apply_table_crawl_visual()
 	source.clear_table_crawl_passtable()
-	source.refresh_table_crawl()
-
-/datum/element/table_crawl/proc/on_resting_change(mob/living/carbon/human/source, new_resting)
-	SIGNAL_HANDLER
-	if(source.table_crawl_under_table && !new_resting && source.body_position == LYING_DOWN)
-		source.table_crawl_head_bonk()
-	source.refresh_table_crawl()
-
-/datum/element/table_crawl/proc/on_body_position_change(mob/living/carbon/human/source, new_body_position, old_body_position)
-	SIGNAL_HANDLER
-	if(source.table_crawl_under_table && old_body_position == LYING_DOWN && new_body_position == STANDING_UP)
-		if(!HAS_TRAIT(source, TRAIT_INCAPACITATED))
-			source.table_crawl_head_bonk()
-		source.queue_table_crawl_restore()
-		return
-	source.refresh_table_crawl()
-
-/datum/element/table_crawl/proc/on_buckled_change(mob/living/carbon/human/source, ...)
-	SIGNAL_HANDLER
 	source.refresh_table_crawl()
