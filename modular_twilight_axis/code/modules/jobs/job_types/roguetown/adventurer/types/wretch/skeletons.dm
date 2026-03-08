@@ -1,5 +1,6 @@
 /obj/item/clothing/head/roguetown/duelhat/pretzel/skelet
 	name = "old rebel's hat"
+	desc = "Старая фаретровая шляпа, пожёванная временем, идеально подходит какому-нибудь бунтовщику против этого общество, позади которого ничего не осталось кроме кучки костей."
 	max_integrity = 100
 	armor = ARMOR_SPELLSINGER
 	body_parts_covered = HEAD|HAIR|EARS
@@ -79,11 +80,9 @@
 	switch(classchoice)
 		if("Krieger")
 			ADD_TRAIT(H, TRAIT_HEAVYARMOR, TRAIT_GENERIC)
-			H.adjust_skillrank(/datum/skill/combat/swords, 4, TRUE)
 			head = /obj/item/clothing/head/roguetown/roguehood/red
 			backl = /obj/item/storage/backpack/rogue/satchel
 			cloak = /obj/item/clothing/cloak/tabard
-			backr = /obj/item/rogueweapon/scabbard/gwstrap
 			armor = /obj/item/clothing/suit/roguetown/armor/plate/full/iron
 			shirt = /obj/item/clothing/suit/roguetown/armor/gambeson/heavy
 			wrists = /obj/item/clothing/wrists/roguetown/bracers/iron
@@ -95,10 +94,19 @@
 			id = /obj/item/clothing/ring/aalloy
 		if("Armbrustschütze")
 			ADD_TRAIT(H, TRAIT_MEDIUMARMOR, TRAIT_GENERIC)
-			H.adjust_skillrank(/datum/skill/combat/crossbows, 4, TRUE)
 			H.adjust_skillrank(/datum/skill/combat/maces, 3, TRUE)
+			var/arch = list("Crossbow", "Bow")
+			var/archchoice = input("HOW YOU FOUGHT 1000 YILS AGO", "Choose your WEAPON") as anything in arch
+			switch(archchoice)
+				if("Crossbow")
+					H.adjust_skillrank(/datum/skill/combat/crossbows, 4, TRUE)
+					backr = /obj/item/gun/ballistic/revolver/grenadelauncher/crossbow
+					beltl = /obj/item/quiver/bolt/standard
+				if("Bow")
+					H.adjust_skillrank(/datum/skill/combat/bows, 4, TRUE)
+					backr = /obj/item/gun/ballistic/revolver/grenadelauncher/bow/recurve
+					beltl = /obj/item/quiver/arrows/bronze
 			backl = /obj/item/storage/backpack/rogue/satchel
-			backr = /obj/item/gun/ballistic/revolver/grenadelauncher/crossbow
 			neck = /obj/item/clothing/neck/roguetown/leather
 			shirt = /obj/item/clothing/suit/roguetown/armor/chainmail/hauberk/aalloy
 			armor = /obj/item/clothing/suit/roguetown/armor/plate/bronze
@@ -108,7 +116,6 @@
 			pants = /obj/item/clothing/under/roguetown/trou/leather
 			shoes = /obj/item/clothing/shoes/roguetown/boots/leather/reinforced
 			belt = /obj/item/storage/belt/rogue/leather
-			beltl = /obj/item/quiver/bolt/standard
 			beltr = /obj/item/rogueweapon/mace/cudgel
 		if("Toter Aufrührer")
 			ADD_TRAIT(H, TRAIT_DODGEEXPERT, TRAIT_GENERIC)
@@ -136,8 +143,25 @@
 /datum/outfit/job/roguetown/wretch/hero/post_equip(mob/living/carbon/human/H)
 	..()
 	if(HAS_TRAIT(H, TRAIT_HEAVYARMOR))
-		var/obj/item/rogueweapon/greatsword/grenz/flamberge/paalloy/W = new(get_turf(H))
-		if(!H.put_in_hands(W))
-			W.forceMove(get_turf(H))
+		var/weapon = list("Flameberge", "Flail and Shield", "Mace")
+		var/weaponchoice = input("HOW YOU FOUGHT 1000 YILS AGO", "Choose your WEAPON") as anything in weapon
+		switch(weaponchoice)
+			if("Flameberge")
+				H.adjust_skillrank(/datum/skill/combat/swords, 4, TRUE)
+				var/obj/item/rogueweapon/greatsword/grenz/flamberge/paalloy/W = new(get_turf(H))
+				H.equip_to_slot_or_del(new /obj/item/rogueweapon/scabbard/gwstrap, SLOT_BACK_R, TRUE)
+				if(!H.put_in_hands(W))
+					W.forceMove(get_turf(H))
+			if("Flail and Shield")
+				H.adjust_skillrank(/datum/skill/combat/shields, 3, TRUE)
+				H.adjust_skillrank(/datum/skill/combat/whipsflails, 3, TRUE)
+				H.equip_to_slot_or_del(new /obj/item/rogueweapon/shield/iron/bone, SLOT_BACK_R, TRUE)
+				H.equip_to_slot_or_del(new /obj/item/rogueweapon/flail/sflail/paflail, SLOT_BELT_R, TRUE)
+			if("Mace")
+				H.adjust_skillrank(/datum/skill/combat/maces, 3, TRUE)
+				var/obj/item/rogueweapon/mace/goden/aalloy/W = new(get_turf(H))
+				H.equip_to_slot_or_del(new /obj/item/rogueweapon/scabbard/gwstrap, SLOT_BACK_R, TRUE)
+				if(!H.put_in_hands(W))
+					W.forceMove(get_turf(H))
 
 		//no castifico, you're a fucking skeleton. Life already punched you
