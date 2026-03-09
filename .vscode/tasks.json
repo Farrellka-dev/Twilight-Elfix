@@ -86,13 +86,10 @@
         {
             "type": "process",
             "command": "tools/build/build.sh",
-            "args": [
-                "-DLOWMEMORYMODE",
-                "-DNO_DUNGEON"
-            ],
+            "args": ["-DLOCALTEST", "-DLOWMEMORYMODE", "-DNO_DUNGEON"],
             "windows": {
                 "command": ".\\tools\\build\\build.bat",
-                "args": ["-DLOWMEMORYMODE", "-DNO_DUNGEON"]
+                "args": ["-DLOCALTEST", "-DLOWMEMORYMODE", "-DNO_DUNGEON"]
             },
             "options": {
                 "env": {
