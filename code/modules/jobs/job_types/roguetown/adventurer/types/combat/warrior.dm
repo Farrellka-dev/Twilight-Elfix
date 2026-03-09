@@ -222,7 +222,7 @@
 	tutorial = "You are a brutal warrior, who has foregone armor in favor of pure strength. Crush your enemies, see them driven before you, and hear the lamentations of their women! Oh, and you can specialize in unarmed combat and wrestling."
 	outfit = /datum/outfit/job/roguetown/adventurer/barbarian
 	cmode_music = 'sound/music/cmode/antag/combat_darkstar.ogg'
-	traits_applied = list(TRAIT_STEELHEARTED, TRAIT_IGNOREDAMAGESLOWDOWN, TRAIT_BLOOD_RESISTANCE, TRAIT_NOPAINSTUN)
+	traits_applied = list(TRAIT_STEELHEARTED, TRAIT_CRITICAL_RESISTANCE, TRAIT_NOPAINSTUN)
 	subclass_stats = list(
 		STATKEY_STR = 3,
 		STATKEY_CON = 2,
@@ -322,7 +322,7 @@
 		/obj/item/rogueweapon/scabbard/sheath = 1,
 		/obj/item/rogueweapon/huntingknife/bronze = 1,
 		)
-
+   
 /datum/advclass/sfighter/ironclad
 	name = "Ironclad"
 	tutorial = "You are a warrior who puts their trust in durable armor. The best offense is a good defense."
@@ -619,6 +619,7 @@
 		/obj/item/recipe_book/survival = 1,
 		/obj/item/storage/belt/rogue/pouch/coins/poor = 1,
 		/obj/item/rogueweapon/scabbard/sheath = 1,
+		/obj/item/book/rogue/trophy_rules = 1 //TA edit - added trophy_hunter component
 		)
 
 	H.set_blindness(0)
@@ -633,6 +634,8 @@
 			wrists = /obj/item/clothing/neck/roguetown/psicross/silver/noc 
 		else
 			wrists = /obj/item/clothing/neck/roguetown/psicross/silver/undivided
+	
+	H.AddComponent(/datum/component/trophy_hunter) //TA edit - added trophy_hunter component
 
 	//Old people get the option to become glass cannons. Expert Knives + Expert in their chosen weapon, but a permenant -I STR, -I PER, -2 SPD and -2 CON debuff.
 
