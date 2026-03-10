@@ -1,4 +1,3 @@
-
 /proc/soundbreaker_get_component(mob/living/user)
 	if(!isliving(user))
 		return null
@@ -7,6 +6,12 @@
 	if(!C)
 		C = user.AddComponent(/datum/component/combo_core/soundbreaker)
 	return C
+
+/proc/soundbreaker_get_component_safe(mob/living/user)
+	if(!isliving(user))
+		return null
+
+	return user.GetComponent(/datum/component/combo_core/soundbreaker)
 
 /proc/soundbreaker_prime_note(mob/living/user, note_id, damage_mult, damage_type, note_name)
 	var/datum/component/combo_core/soundbreaker/C = soundbreaker_get_component(user)
@@ -32,7 +37,7 @@
 	if(!isliving(user))
 		return base_duration
 
-	var/datum/component/combo_core/soundbreaker/C = soundbreaker_get_component(user)
+	var/datum/component/combo_core/soundbreaker/C = soundbreaker_get_component_safe(user)
 	if(!C)
 		return base_duration
 
