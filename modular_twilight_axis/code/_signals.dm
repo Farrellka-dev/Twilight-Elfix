@@ -35,6 +35,9 @@
 /// Args: (note_id, damage_mult, damage_type, note_name)
 #define COMSIG_SOUNDBREAKER_PRIME_NOTE "soundbreaker_prime_note"
 #define COMPONENT_SOUNDBREAKER_PRIMED (1<<0)
+
+/// Successful kick
+#define COMSIG_SOUNDBREAKER_KICK_SUCCESS "soundbreaker_kick_success"
 //SOUNDBREAKER - END//
 
 //RONIN - BEGIN//

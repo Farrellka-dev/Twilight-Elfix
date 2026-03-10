@@ -28,6 +28,16 @@
 		return
 	SEND_SIGNAL(defender, COMSIG_SOUNDBREAKER_RIFF_DEFENSE_SUCCESS)
 
+/proc/soundbreaker_get_kick_offbalance_duration(mob/living/user, base_duration = 3 SECONDS)
+	if(!isliving(user))
+		return base_duration
+
+	var/datum/component/combo_core/soundbreaker/C = soundbreaker_get_component(user)
+	if(!C)
+		return base_duration
+
+	return C.GetKickOffbalanceDuration(base_duration)
+
 /datum/component/combo_core/soundbreaker
 	parent_type = /datum/component/combo_core/combat_style
 
@@ -54,6 +64,7 @@
 	RegisterSignal(owner, COMSIG_SOUNDBREAKER_RIFF_DEFENSE_SUCCESS, PROC_REF(_sig_riff_defense_success))
 	RegisterSignal(owner, COMSIG_SOUNDBREAKER_NOTE_PROJECTILE_HIT, PROC_REF(_sig_note_projectile_hit))
 	RegisterSignal(owner, COMSIG_SOUNDBREAKER_COMBO_CLEARED, PROC_REF(_sig_combo_cleared))
+	RegisterSignal(owner, COMSIG_SOUNDBREAKER_KICK_SUCCESS, PROC_REF(_sig_kick_success))
 
 	GrantSpells()
 
@@ -64,6 +75,7 @@
 		UnregisterSignal(owner, COMSIG_SOUNDBREAKER_RIFF_DEFENSE_SUCCESS)
 		UnregisterSignal(owner, COMSIG_SOUNDBREAKER_NOTE_PROJECTILE_HIT)
 		UnregisterSignal(owner, COMSIG_SOUNDBREAKER_COMBO_CLEARED)
+		UnregisterSignal(owner, COMSIG_SOUNDBREAKER_KICK_SUCCESS)
 		RevokeSpells()
 
 	if(proxy)
@@ -184,6 +196,76 @@
 	ClearNoteIcons()
 	ClearHistory("external_clear")
 	return 0
+
+/datum/component/combo_core/soundbreaker/proc/_sig_kick_success(datum/source, atom/target_atom)
+	SIGNAL_HANDLER
+
+	HandleSuccessfulKick(target_atom)
+	return 0
+
+/datum/component/combo_core/soundbreaker/proc/HandleSuccessfulKick(atom/target_atom)
+	if(!owner)
+		return FALSE
+
+	if(GetComboStacks() <= 0)
+		return FALSE
+
+	var/has_breaker = !!owner.has_status_effect(/datum/status_effect/buff/soundbreaker_breaker_window)
+	var/has_combo = !!owner.has_status_effect(/datum/status_effect/buff/soundbreaker_combo)
+	if(!has_breaker && !has_combo)
+		return FALSE
+
+	var/refreshed_any = FALSE
+	if(has_breaker && RefreshBreakerWindowTimer())
+		refreshed_any = TRUE
+
+	if(has_combo && RefreshComboWindowTimer())
+		refreshed_any = TRUE
+
+	return refreshed_any
+	
+/datum/component/combo_core/soundbreaker/proc/RefreshBreakerWindowTimer()
+	if(!owner)
+		return FALSE
+
+	var/datum/status_effect/buff/soundbreaker_breaker_window/B = owner.has_status_effect(/datum/status_effect/buff/soundbreaker_breaker_window)
+	if(!B)
+		return FALSE
+
+	var/stacks = max(1, B.stacks)
+
+	owner.remove_status_effect(/datum/status_effect/buff/soundbreaker_breaker_window)
+	owner.apply_status_effect(/datum/status_effect/buff/soundbreaker_breaker_window, stacks)
+
+	return TRUE
+
+/datum/component/combo_core/soundbreaker/proc/RefreshComboWindowTimer()
+	if(!owner)
+		return FALSE
+
+	var/datum/status_effect/buff/soundbreaker_combo/C = owner.has_status_effect(/datum/status_effect/buff/soundbreaker_combo)
+	if(!C)
+		return FALSE
+
+	var/stacks = max(1, C.stacks)
+
+	owner.remove_status_effect(/datum/status_effect/buff/soundbreaker_combo)
+	owner.apply_status_effect(/datum/status_effect/buff/soundbreaker_combo, stacks)
+
+	return TRUE
+
+/datum/component/combo_core/soundbreaker/proc/GetKickOffbalanceDuration(base_duration = 3 SECONDS)
+	if(!owner)
+		return base_duration
+
+	var/stacks = clamp(GetComboStacks(), 0, 5)
+	if(stacks <= 0)
+		return base_duration
+
+	var/mult = 1 - (stacks * 0.10)
+	mult = clamp(mult, 0.5, 1)
+
+	return max(0.5 SECONDS, round(base_duration * mult))
 
 // ------------------------------------------------------------
 // spells / status integration

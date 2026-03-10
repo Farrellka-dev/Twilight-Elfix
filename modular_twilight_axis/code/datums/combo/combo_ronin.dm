@@ -547,13 +547,9 @@
 	elder_tanuki_riposte_ready = FALSE
 	OnComboConsumed("tanuki_riposte", target)
 
-	var/force = _GetBladeForce()
-	var/extra = max(1, round(force * 0.5))
-
 	target.Stun(1 SECONDS)
 	target.OffBalance(2 SECONDS)
 	target.Immobilize(2 SECONDS)
-	target.Slowdown(3)
 	target.apply_status_effect(/datum/status_effect/debuff/baited)
 	target.apply_status_effect(/datum/status_effect/debuff/exposed)
 	target.apply_status_effect(/datum/status_effect/debuff/clickcd, 5 SECONDS)

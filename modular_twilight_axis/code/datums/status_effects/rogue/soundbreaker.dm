@@ -151,7 +151,7 @@
 
 #define SB_BREAKER_PER_STACK 			10
 #define SB_BREAKER_MAX_CHANCE 			90
-#define SB_BREAKER_CLICK_MOD_PER_STACK	0.10
+#define SB_BREAKER_CLICK_MOD_PER_STACK	0.20
 #define SB_BREAKER_BASE_CHANCE 			40
 
 /datum/status_effect/buff/soundbreaker_breaker_window
