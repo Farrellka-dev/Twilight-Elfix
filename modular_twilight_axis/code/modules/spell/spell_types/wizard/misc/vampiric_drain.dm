@@ -72,6 +72,10 @@
 			to_chat(user, span_warning("The distance is too great! The link snaps!"))
 			break
 
+		if(user.z != target.z)
+			to_chat(user, span_warning("The distance is too great! The link snaps!"))
+			break
+		
 		tick_count++
 		
 		var/current_damage = (base_damage + (tick_count * ramp_multiplier)) + (skill_mod * 2)
