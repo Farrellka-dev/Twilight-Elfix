@@ -132,12 +132,12 @@
 			shoes = /obj/item/clothing/shoes/roguetown/grenzelhoft
 			belt = /obj/item/storage/belt/rogue/leather/double
 			beltl = /obj/item/gun/ballistic/twilight_firearm/arquebus_pistol
-			beltr = /obj/item/rogueweapon/knuckles/paknuckles
 			backpack_contents = list(
 				/obj/item/recipe_book/survival = 1,
 				/obj/item/rogueweapon/huntingknife/idagger = 1,
 				/obj/item/rogueweapon/scabbard/sheath = 1,
-				/obj/item/twilight_powderflask
+				/obj/item/twilight_powderflask = 1,
+				/obj/item/clothing/gloves/roguetown/knuckles/ancient = 1
 			)
 
 /datum/outfit/job/roguetown/wretch/hero/post_equip(mob/living/carbon/human/H)
