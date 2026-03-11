@@ -1,4 +1,3 @@
-/*
 /datum/advclass/noctite_spellblade
 	name = "Newmoon Spellblade"
 	tutorial = "Заклинатели Новолунья известны в кругах радикальных Ноктитов как самые преданные Нок монахи, чаще всего происходящие из Зибантии. \
@@ -56,6 +55,7 @@
 
 	H.cmode_music = 'modular_twilight_axis/church_classes/sound/cmode_spellblade.ogg'
 	ADD_TRAIT(H, TRAIT_CLERGY_TA, TRAIT_GENERIC)
+	REMOVE_TRAIT(H, TRAIT_RITUALIST, TRAIT_GENERIC)
 
 	if(H.mind)
 		SStreasury.give_money_account(ECONOMIC_LOWER_MIDDLE_CLASS, H, "Church Funding.")
@@ -71,4 +71,3 @@
 	H.AddSpell(select_weapon)
 	H.AddSpell(summon_weapon)
 	H.AddSpell(new /obj/effect/proc_holder/spell/self/noctite_fortify)
-*/

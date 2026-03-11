@@ -463,7 +463,7 @@
 	faction = "Station"
 	tutorial = "Martyrs are hand-picked among the most devout of the Holy See. They are given one of the See's cherished relics to protect the Church, and to inspire hope and lead by example of grace, kindness and vicious intolerance to any who do not share the belief of the Ten. They have sworn an Oath in the sight of the gods, and will fulfill it to the bitter end."
 	allowed_sexes = list(MALE, FEMALE)
-	allowed_races = RACES_NO_CONSTRUCT
+	allowed_races = RACES_SHUNNED_UP
 	allowed_patrons = list(/datum/patron/divine/undivided)
 	outfit = /datum/outfit/job/roguetown/martyr
 	min_pq = 15 //Cus it's a Martyr of the Ten. Get it.
@@ -481,7 +481,7 @@
 	//No undeath-adjacent virtues for a role that can sacrifice itself. The Ten like their sacrifices 'pure'. (I actually didn't want to code returning those virtue traits post-sword use)
 	//They get those traits during sword activation, anyway.
 	//Dual wielder is there to stand-in for ambidextrous in case they activate their sword in their off-hand.
-	virtue_restrictions = list(/datum/virtue/utility/noble, /datum/virtue/combat/rotcured, /datum/virtue/utility/deadened, /datum/virtue/utility/deathless, /datum/virtue/combat/dualwielder, /datum/virtue/heretic/zchurch_keyholder)
+	virtue_restrictions = list(/datum/virtue/utility/noble, /datum/virtue/combat/rotcured, /datum/virtue/utility/deathless, /datum/virtue/combat/dualwielder, /datum/virtue/heretic/zchurch_keyholder)
 
 	advclass_cat_rolls = list(CTAG_MARTYR = 2)
 	job_subclasses = list(
@@ -546,7 +546,8 @@
 	id = /obj/item/clothing/neck/roguetown/psicross/undivided
 	backpack_contents = list(
 		/obj/item/rogueweapon/huntingknife/idagger/silver = 1,
-		/obj/item/rogueweapon/scabbard/sheath = 1
+		/obj/item/rogueweapon/scabbard/sheath = 1,
+		/obj/item/mini_flagpole/church,
 		)
 	H.dna.species.soundpack_m = new /datum/voicepack/male/knight()
 	H.AddComponent(/datum/component/wise_tree_alert)

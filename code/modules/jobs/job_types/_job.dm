@@ -291,6 +291,13 @@
 
 	log_admin("[H.key]/([H.real_name]) has joined as [H.mind.assigned_role].")
 
+/// Called when a player permanently leaves the round (via returntolobby). Handles slot reopening and respawn delays.
+/datum/job/proc/on_round_removal(mob/M)
+	if(job_reopens_slots_on_death)
+		current_positions = max(0, current_positions - 1)
+	if(same_job_respawn_delay && M.ckey)
+		GLOB.job_respawn_delays[M.ckey] = world.time + same_job_respawn_delay
+
 /client/verb/set_mugshot()
 	set category = "OOC"
 	set name = "Set Credits Mugshot"
@@ -487,8 +494,8 @@
 
 	if(length(statcl))
 		for(var/stat in statcl)
-			if(statcl[stat] < H.get_stat(stat))
-				H.change_stat(stat, (statcl[stat] - H.get_stat(stat)))
+			if(statcl[stat] < H.get_true_stat(stat))
+				H.change_stat(stat, (statcl[stat] - H.get_true_stat(stat)))
 				to_chat(H, "Your [stat] was reduced to \Roman[statcl[stat]] due to class limits.")
 
 // LETHALSTONE EDIT: Helper functions for pronoun-based clothing selection
