@@ -15,6 +15,7 @@
 	var/charge = SEX_MAX_CHARGE
 	/// Last ejaculation time
 	var/last_ejaculation_time = 0
+	var/aphrodisiac = 0
 
 /datum/component/arousal/Destroy(force)
 	. = ..()
@@ -203,6 +204,7 @@
 	if(prob(1))
 		parent.emote("groan", forced = TRUE)
 
+
 /datum/component/arousal/proc/handle_climax(climax_type, mob/living/carbon/human/climaxer, mob/living/carbon/human/partner, action)
 
 	switch(climax_type)
@@ -211,6 +213,12 @@
 			playsound(partner, 'sound/misc/mat/endout.ogg', 50, TRUE, ignore_walls = FALSE)
 			var/turf/turf = get_turf(partner)
 			new /obj/effect/decal/cleanable/coom(turf)
+			if(partner)
+				var/datum/status_effect/facial/facial = partner.has_status_effect(/datum/status_effect/facial)
+				if(!facial)
+					partner.apply_status_effect(/datum/status_effect/facial)
+				else
+					facial.refresh_cum()
 		if("into")
 			log_combat(climaxer, partner, "Came inside [partner]")
 			playsound(partner, 'sound/misc/mat/endin.ogg', 50, TRUE, ignore_walls = FALSE)
@@ -408,19 +416,19 @@
 				return 0.8
 		if(SEX_FORCE_MID)
 			if(giving)
-				return 1.2
+				return 1.0
 			else
-				return 1.2
+				return 1.0
 		if(SEX_FORCE_HIGH)
 			if(giving)
-				return 1.6
+				return 1.25
 			else
 				return 1.2
 		if(SEX_FORCE_EXTREME)
 			if(giving)
-				return 2.0
+				return 1.55
 			else
-				return 0.8
+				return 1.5
 
 /datum/component/arousal/proc/get_force_pain_multiplier(passed_force)
 	switch(passed_force)

@@ -76,7 +76,7 @@
 /mob/living/simple_animal/hostile/retaliate/rogue/infernal/imp/death(gibbed)
 	..()
 	update_icon()
-	sleep(1)
+	stoplag(1)
 	qdel(src)
 
 
