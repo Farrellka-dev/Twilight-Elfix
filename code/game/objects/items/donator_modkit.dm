@@ -244,6 +244,7 @@
 		/obj/item/clothing/head/roguetown/helmet/heavy/barbute/visor            = /obj/item/clothing/head/roguetown/helmet/heavy/barbute/visor/dakken
 	)
 	result_item = null
+	icon_loadout = /obj/item/clothing/head/roguetown/helmet/heavy/knight/armet/dakken
 
 //StinkethStonketh - Shashka & pike
 /obj/item/enchantingkit/stinketh_shashka
