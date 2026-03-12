@@ -61,7 +61,7 @@
 /mob/living/simple_animal/hostile/retaliate/rogue/fae/sprite/death(gibbed)
 	..()
 	update_icon()
-	sleep(1)
+	stoplag(1)
 	qdel(src)
 
 /mob/living/simple_animal/hostile/retaliate/rogue/fae/sprite/taunted(mob/user)

@@ -1,4 +1,4 @@
-//Miscellaneous
+/*//Miscellaneous
 
 /datum/loadout_item/card_deck
 	name = "Card Deck"
@@ -25,3 +25,5 @@
 	path = /obj/item/storage/backpack/rogue/satchel
 	sort_category = "Miscellaneous"
 	cost = 2
+
+*/

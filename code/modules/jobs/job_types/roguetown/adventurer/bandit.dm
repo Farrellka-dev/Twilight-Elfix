@@ -16,9 +16,9 @@
 
 	display_order = JDO_BANDIT
 	announce_latejoin = FALSE
-	min_pq = 3
+	min_pq = 25
 	max_pq = null
-	round_contrib_points = 5
+	round_contrib_points = null
 
 	advclass_cat_rolls = list(CTAG_BANDIT = 20)
 	PQ_boost_divider = 10
@@ -29,7 +29,7 @@
 	job_reopens_slots_on_death = FALSE //no endless stream of bandits, unless the migration waves deem it so
 	job_traits = list(TRAIT_SELF_SUSTENANCE, TRAIT_STEELHEARTED)//Bandits and knaves truly though
 	vice_restrictions = list(/datum/charflaw/noeyer, /datum/charflaw/noeyel, /datum/charflaw/mute, /datum/charflaw/limbloss/arm_r, /datum/charflaw/limbloss/arm_l)
-	same_job_respawn_delay = 1 MINUTES
+	same_job_respawn_delay = 30 MINUTES
 	cmode_music = 'sound/music/cmode/antag/combat_deadlyshadows.ogg'
 	job_subclasses = list(
 		/datum/advclass/brigand,
@@ -38,7 +38,8 @@
 		/datum/advclass/hedgemage,
 		/datum/advclass/iconoclast,
 		/datum/advclass/knave,
-		/datum/advclass/sellsword
+		/datum/advclass/sellsword,
+		/datum/advclass/twilight_afreet
 	)
 
 /datum/job/roguetown/bandit/after_spawn(mob/living/L, mob/M, latejoin = TRUE)
@@ -120,3 +121,25 @@
 
 	add_bounty(H.real_name, race, gender, descriptor_height, descriptor_body, descriptor_voice, bounty_total, FALSE, my_crime, bounty_poster)
 
+/proc/update_bandits_slots()
+	var/datum/job/bandit_job = SSjob.GetJob("Bandit")
+	if(!bandit_job)
+		return
+
+	var/player_count = length(GLOB.joined_player_list)
+	var/ready_player_count = length(GLOB.ready_player_list)
+	var/current_players = (SSticker.current_state == GAME_STATE_PREGAME) ? ready_player_count : player_count
+
+	var/slots = 0
+
+	if(SSmapping.config.map_name == "Rockhill")
+		if(current_players > 60)
+			// На Рокхилле - 5 бандитов с 60 онлайна и +1 слот за каждые 40 сверху
+			slots = 5 + round((current_players - 60) / 40)
+	else
+		// Дун ворлд - всегда 5 бандитов
+		if(current_players > 60)
+			slots = 5
+
+	bandit_job.total_positions = slots
+	bandit_job.spawn_positions = slots

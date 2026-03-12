@@ -29,10 +29,10 @@ GLOBAL_LIST_EMPTY(heretical_players)
 	outfit = /datum/outfit/job/roguetown/priest
 	display_order = JDO_BISHOP
 	give_bank_account = TRUE
-	min_pq = 5 // You should know the basics of things if you're going to lead the town's entire religious sector
+	min_pq = 12 // You should know the basics of things if you're going to lead the town's entire religious sector
 	max_pq = null
 	round_contrib_points = 5
-
+	same_job_respawn_delay = 30 MINUTES
 	//No nobility for you, being a member of the clergy means you gave UP your nobility. It says this in many of the church tutorial texts.
 	virtue_restrictions = list(/datum/virtue/utility/noble)
 	job_traits = list(TRAIT_CHOSEN, TRAIT_RITUALIST, TRAIT_GRAVEROBBER, TRAIT_HOMESTEAD_EXPERT, TRAIT_MEDICINE_EXPERT, TRAIT_CLERGY)
@@ -59,8 +59,8 @@ GLOBAL_LIST_EMPTY(heretical_players)
 	)
 	age_mod = /datum/class_age_mod/priest
 	subclass_skills = list(
-		/datum/skill/combat/wrestling = SKILL_LEVEL_JOURNEYMAN,
-		/datum/skill/combat/unarmed = SKILL_LEVEL_JOURNEYMAN,
+		/datum/skill/combat/wrestling = SKILL_LEVEL_MASTER,
+		/datum/skill/combat/unarmed = SKILL_LEVEL_MASTER,
 		/datum/skill/combat/staves = SKILL_LEVEL_MASTER,
 		/datum/skill/combat/polearms = SKILL_LEVEL_MASTER,
 		/datum/skill/misc/reading = SKILL_LEVEL_LEGENDARY,
@@ -106,6 +106,7 @@ GLOBAL_LIST_EMPTY(heretical_players)
 	var/datum/devotion/C = new /datum/devotion(H, H.patron) // This creates the cleric holder used for devotion spells
 	C.grant_miracles(H, cleric_tier = CLERIC_T4, passive_gain = CLERIC_REGEN_MAJOR, start_maxed = TRUE)	//Starts off maxed out.
 
+	H.mind?.AddSpell(new /obj/effect/proc_holder/spell/invoked/projectile/lightningbolt/sacred_flame_rogue) //TA EDIT
 	H.verbs |= /mob/living/carbon/human/proc/coronate_lord
 	H.verbs |= /mob/living/carbon/human/proc/churchannouncement
 	H.verbs |= /mob/living/carbon/human/proc/churchexcommunicate //your button against clergy
@@ -114,6 +115,10 @@ GLOBAL_LIST_EMPTY(heretical_players)
 	H.verbs |= /mob/living/carbon/human/proc/completesermon
 	H.mind?.AddSpell(new /obj/effect/proc_holder/spell/invoked/convert_heretic_priest)
 	H.mind?.AddSpell(new /obj/effect/proc_holder/spell/invoked/revive)
+	H.mind.special_items["Bishop Cape"] = /obj/item/clothing/cloak/bishop
+	H.mind.special_items["Bishop Hood"] = /obj/item/clothing/head/roguetown/roguehood/bishop
+	H.mind.special_items["Bishop Mask"] = /obj/item/clothing/mask/rogue/ragmask/bishop
+	H.mind.special_items["Bishop Robe"] = /obj/item/clothing/suit/roguetown/shirt/robe/bishop
 	if(H.mind)
 		SStreasury.give_money_account(ECONOMIC_UPPER_CLASS, H, "Church Funding.")
 	switch(H.patron?.type)
@@ -319,7 +324,7 @@ GLOBAL_LIST_EMPTY(heretical_players)
 		//Coronate new King (or Queen)
 		HU.mind.assigned_role = "Grand Duke"
 		HU.job = "Grand Duke"
-		ADD_TRAIT(HU, TRAIT_DNR, TRAIT_GENERIC) // Consequences, Johnathan.
+	//	ADD_TRAIT(HU, TRAIT_DNR, TRAIT_GENERIC) // Consequences, Johnathan.
 		SSticker.set_ruler_mob(HU)
 		SSticker.regentmob = null
 		var/dispjob = mind.assigned_role
@@ -355,7 +360,8 @@ GLOBAL_LIST_EMPTY(heretical_players)
 		if(do_after(src, 15 SECONDS, target = src)) // Reduced to 15 seconds from 30 on the original Herald PR. 15 is well enough time for sm1 to shove you.
 			say(announcementinput)
 			var/sanitized_input = trim(copytext(sanitize(announcementinput), 1, MAX_MESSAGE_LEN))
-			var/treated_input = treat_message(sanitized_input, /datum/language/common)
+			var/accented_input = treat_message_accent(sanitized_input, strings("accent_universal.json", "universal"), 1)
+			var/treated_input = treat_message(accented_input, /datum/language/common)
 			priority_announce("[treated_input]", "The Bishop Preaches", 'sound/misc/bell.ogg', sender = src)
 			COOLDOWN_START(src, priest_announcement, PRIEST_ANNOUNCEMENT_COOLDOWN)
 		else
