@@ -113,7 +113,7 @@ GLOBAL_LIST_EMPTY(loadout_items_by_category)
 	category = list("Головные уборы", "Триумфы")
 	path = /obj/item/clothing/head/roguetown/tw_d_graggar
 	triumph_cost = 20
-	
+
 /datum/loadout_item/tw_d_efreet
 	name = "afreet helmkleinod (-15 TRI)"
 	category = list("Головные уборы", "Триумфы")
@@ -1333,7 +1333,7 @@ GLOBAL_LIST_EMPTY(loadout_items_by_category)
 	path = /obj/item/enchantingkit/dakken_zizhelm
 	category = list("Броня", "Донат")
 	donatitem = TRUE
- 
+
 /datum/loadout_item/donator_bigfoot_axe
 	name = "Donator Kit - Gilded GreatAxe - Required: Steel Greataxe"
 	category = list("Оружие", "Донат")
@@ -1345,13 +1345,13 @@ GLOBAL_LIST_EMPTY(loadout_items_by_category)
 	path = /obj/item/enchantingkit/zydrasiconocrown
 	category = list("Броня", "Донат")
 	donatitem = TRUE
-	
+
 /datum/loadout_item/donator_zydrasiconopauldrons
 	name = "Donator Kit - Iconoclast Pauldrons - Required: Lightweight Brigandine(Only men, no small races)"
 	path = /obj/item/enchantingkit/zydrasiconopauldrons
 	category = list("Броня", "Донат")
 	donatitem = TRUE
-	
+
 /datum/loadout_item/donator_eiren4
 	name = "Donator Kit - Darkwood's Embrace"
 	path = /obj/item/clothing/suit/roguetown/armor/longcoat/eiren
@@ -1369,7 +1369,7 @@ GLOBAL_LIST_EMPTY(loadout_items_by_category)
 	path = /obj/item/enchantingkit/zydrasiconosash
 	category = list("Броня", "Донат")
 	donatitem = TRUE
-	
+
 /datum/loadout_item/donator_zydras
 	name = "Donator Kit - Padded silky dress - Required: Silky Dress(No Small Races)"
 	category = list("Одежда", "Донат")
@@ -1866,7 +1866,7 @@ GLOBAL_LIST_EMPTY(loadout_items_by_category)
 	category = list("Плащи", "Донат")
 	path = /obj/item/clothing/cloak/templar/necran
 	donatitem = TRUE
-	
+
 /datum/loadout_item/donat/tabard/crusader/psydon
 	name = "Табард Псайдона"
 	category = list("Плащи", "Донат")
@@ -1945,6 +1945,12 @@ GLOBAL_LIST_EMPTY(loadout_items_by_category)
 	name = "Эоранская маска"
 	category = list("Головные уборы", "Донат")
 	path = /obj/item/clothing/head/roguetown/eoramask
+	donatitem = TRUE
+
+/datum/loadout_item/donat/xylixmask
+	name = "Ксайликситская маска"
+	category = list("Головные уборы", "Донат")
+	path = /obj/item/clothing/mask/rogue/xylixmask
 	donatitem = TRUE
 
 /datum/loadout_item/donat/eyepatchfake
@@ -2059,7 +2065,7 @@ GLOBAL_LIST_EMPTY(loadout_items_by_category)
 	path = /obj/item/clothing/head/roguetown/tw_d_graggar
 	donatitem = TRUE
 	donat_tier = 2
-	
+
 /datum/loadout_item/tw_d_efreet_donat
 	name = "afreet helmkleinod(Донат - Т2)"
 	category = list("Головные уборы", "Донат")
