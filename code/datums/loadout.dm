@@ -2059,7 +2059,7 @@ GLOBAL_LIST_EMPTY(loadout_items_by_category)
 
 /datum/loadout_item/donat/maidband
     name = "Чепчик горничной (новый)"
-    category = "Головные уборы"
+    category = list("Головные уборы", "Донат")
     path = /obj/item/clothing/head/roguetown/maidband
 	donatitem = TRUE
 
