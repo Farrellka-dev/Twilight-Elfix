@@ -88,6 +88,7 @@
 	var/fingers = TRUE
 	var/organ_slowdown = 0 // Its here because this is first shared definition between two leg organ paths
 	var/is_prosthetic = FALSE
+	var/brand_text = null
 
 	/// Visaul markings to be rendered alongside the bodypart
 	var/list/markings

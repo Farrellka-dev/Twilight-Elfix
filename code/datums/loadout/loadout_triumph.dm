@@ -1,4 +1,4 @@
-//////////////////
+/*//////////////////
 //  TRIUMPHS !  //
 //////////////////
 
@@ -268,3 +268,6 @@
 	path = /obj/item/enchantingkit/triumph_weaponkit_psy
 	triumph_cost = 3
 	sort_category = "Triumphs"
+
+*/
+

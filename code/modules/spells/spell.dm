@@ -205,7 +205,7 @@ GLOBAL_LIST_INIT(spells, typesof(/obj/effect/proc_holder/spell)) //needed for th
 
 	var/list/req_items = list()		//required worn items to cast
 	var/req_inhand = null			//required inhand to cast
-	var/base_icon_state = "spell"
+	base_icon_state = "spell"
 	var/associated_skill = /datum/skill/magic/arcane
 	var/miracle = FALSE
 	var/devotion_cost = 0
@@ -419,6 +419,10 @@ GLOBAL_LIST_INIT(spells, typesof(/obj/effect/proc_holder/spell)) //needed for th
 	if(!phase_allowed && istype(user.loc, /obj/effect/dummy))
 		to_chat(user, span_warning("[name] cannot be cast unless I am completely manifested in the material plane!"))
 		return FALSE
+
+	if(istype(user, /mob/living/carbon/human/species/wildshape) && !istype(user, /mob/living/carbon/human/species/wildshape/dragon_matthios)) //TA changes
+		if(is_type_in_list(src, GLOB.learnable_spells))
+			return FALSE
 
 	if(ishuman(user))
 		var/mob/living/carbon/human/H = user
@@ -884,6 +888,10 @@ GLOBAL_LIST_INIT(spells, typesof(/obj/effect/proc_holder/spell)) //needed for th
 	if(user.stat && !stat_allowed)
 		return FALSE
 
+	if(istype(user, /mob/living/carbon/human/species/wildshape) && !istype(user, /mob/living/carbon/human/species/wildshape/dragon_matthios)) //TA EDIT
+		if(is_type_in_list(src, GLOB.learnable_spells))
+			return FALSE
+	
 	if(!ignore_cockblock && HAS_TRAIT(user, TRAIT_SPELLCOCKBLOCK))
 		return FALSE
 
