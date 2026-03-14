@@ -1,0 +1,5 @@
+author: "Ollanius"
+delete-after: True
+changes:
+  - rscadd: "'Comet' heraldries for the Iron and Wooden Shields."
+  - bugfix: "Billhooks, when two-handed, no longer have an errant pixel."

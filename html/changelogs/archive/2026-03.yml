@@ -695,3 +695,27 @@
   - rscdel: Removed Malum T1 "Rework"
   - bugfix: fixed malum T3 Repair overcapping, removing armour rating and more
   - bugfix: fixed spectacles not working in head slot
+2026-03-14:
+  Daburuu:
+  - rscadd: Added new servant clothes. Replace wandering servants/servants/seneschal
+      lodauts
+  - bugfix: fixed open eoran robes.
+  - bugfix: 'fixed open old dress maid
+
+      :cl:
+
+      <!-- Both :cl:''s are required for the changelog to work! You can put your name
+      to the right of the first :cl: if you want to overwrite your GitHub username
+      as author ingame. -->
+
+      <!-- You can use multiple of the same prefix (they''re only used for the icon
+      ingame) and delete the unneeded ones. Despite some of the tags, changelogs should
+      generally represent how a player might be affected by the changes rather than
+      a summary of the PR''s contents. -->'
+  FreeStylaLT:
+  - spellcheck: Rewrote Raneshen origin blurb.
+  Lamasmaster:
+  - bugfix: Naledi Disciple being Otavan
+  WeNeedMorePhoron:
+  - bugfix: NPC should be properly gating their dialogue to not blow up your entire
+      chat when switching aggro now
