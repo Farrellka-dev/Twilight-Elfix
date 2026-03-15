@@ -9,7 +9,7 @@
 	var/list/types = list()
 	var/mob/current_reader
 	var/open
-	var/base_icon_state
+	base_icon_state
 	var/can_spawn = TRUE
 	var/wiki_name
 	/// Which section this book appears in on the OOC Guidebook. "Crafting Recipes" or "Guides".

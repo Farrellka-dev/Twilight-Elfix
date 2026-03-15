@@ -12,7 +12,7 @@
 	name = "Wortträger"
 	desc = "An imported Grenzelhoftian panzerstecher, a superbly crafted implement devoid of armory marks- merely bearing a maker's mark and the Zenitstadt seal. This one has a grip of walnut wood, and a pale saffira set within the crossguard. The ricasso is engraved with Ravoxian scripture."
 	icon_state = "mansa"
-	icon = 'icons/obj/items/donor_weapons_64.dmi'
+	icon = 'modular_twilight_axis/icons/obj/items/donor_weapons_64.dmi'
 
 //Srusu's donator item - dress
 /obj/item/clothing/suit/roguetown/shirt/dress/emerald
@@ -59,7 +59,7 @@
 	boobed = FALSE
 	flags_inv = HIDECROTCH|HIDEBOOB
 	slot_flags = ITEM_SLOT_SHIRT|ITEM_SLOT_CLOAK|ITEM_SLOT_ARMOR
-	icon = 'icons/clothing/donor_clothes.dmi'
+	icon = 'modular_twilight_axis/icons/clothing/donor_clothes.dmi'
 	mob_overlay_icon = 'icons/clothing/onmob/donor_clothes.dmi'
 	sleeved = null
 	nodismemsleeves = TRUE
@@ -103,7 +103,7 @@
 	if(loc == user && ishuman(user))
 		var/mob/living/carbon/H = user
 		H.update_inv_head()
-		
+
 //Bigfoot's donator item - steel great axe with gilded pattern
 /obj/item/rogueweapon/greataxe/steel/gilded
 	name = "gilded greataxe"
