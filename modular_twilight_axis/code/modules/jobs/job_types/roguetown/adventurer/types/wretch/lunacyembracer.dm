@@ -7,7 +7,6 @@
 	allowed_races = RACES_NO_CONSTRUCT
 	min_pq = 30
 	maximum_possible_slots = 2
-
 	outfit = /datum/outfit/job/roguetown/wretch/lunacyembracer
 	category_tags = list(CTAG_WRETCH)
 	class_select_category = CLASS_CAT_CLERIC

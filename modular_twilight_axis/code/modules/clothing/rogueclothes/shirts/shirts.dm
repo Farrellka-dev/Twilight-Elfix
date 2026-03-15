@@ -419,14 +419,13 @@
 	..()
 	if(!picked)
 		var/iconH = icon_state
-		var/choiceC = input(user, "Choose a color.", "Hammerhold colors") as anything in kimono_colors
+		var/choiceC = input(user, "Choose a color.", "Kimono colors") as anything in kimono_colors
 		if(choiceC == "white")
 			iconH = "white_kimono"
 		if(choiceC == "black")
 			iconH = "black_kimono"
-
-		if(choiceC == "red")
-			iconH = "red_kimono"
+		if(choiceC == "blue")
+			iconH = "blue_kimono"
 		icon_state = iconH
 		item_state = iconH
 		base_icon_state = iconH
@@ -575,6 +574,11 @@
 	icon = 'modular_twilight_axis/icons/roguetown/clothing/shirts.dmi'
 	mob_overlay_icon = 'modular_twilight_axis/icons/roguetown/clothing/onmob/shirts.dmi'
 	sleeved = 'modular_twilight_axis/icons/roguetown/clothing/onmob/helpers/sleeves_armor.dmi'
+
+/obj/item/clothing/suit/roguetown/shirt/kamishimo/ronin
+	name = "ronin kamishimo"
+	desc = "An oddly shaped a sleeveless vest-jacket of wandering ronin."
+	color = CLOTHING_BLUE
 
 /obj/item/clothing/suit/roguetown/shirt/kazengun_jacket
 	name = "kazengun jacket"
