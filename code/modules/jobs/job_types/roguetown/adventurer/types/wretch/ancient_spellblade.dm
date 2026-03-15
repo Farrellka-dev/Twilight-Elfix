@@ -1,4 +1,3 @@
-/*
 /datum/advclass/wretch/ancient_spellblade
 	name = "Unbound Ancient Azurcaephan"
 	tutorial = "You were once an Azurcaephan - a Spellblade from aeons past, perhaps from even the day of Tarichea. You remember your chant, your oath, every move of your blade and the flow of the arcyne. Intellect and will, unlike most other skeletons. Yet, you are without a purpose, without a master. Why do you fight? You do not know. But fight you shall. The world sees you as an abomination. Seek your own path."
@@ -8,6 +7,7 @@
 	class_select_category = CLASS_CAT_ACCURSED
 	category_tags = list(CTAG_WRETCH)
 	maximum_possible_slots = 2 // Two so that the gimmick isn't overdone
+	min_pq = 30 // TA EDIT
 	applies_post_equipment = TRUE
 	traits_applied = list(TRAIT_MEDIUMARMOR, TRAIT_ARCYNE_T2)
 	subclass_stats = list(
@@ -179,4 +179,3 @@
 	H.energy = H.max_energy
 
 	to_chat(H, span_danger("You are playing an Antagonist role. Your very existence is an abomination — everyone is justified in laying you down. You are an ancient warrior risen from death, not a comedic skeleton. Having fun with your character is encouraged, but do not use the role to grief or disregard the setting — play it with gravitas and create memorable moments. Failure to maintain High Roleplay standards may result in punishment."))
-*/
