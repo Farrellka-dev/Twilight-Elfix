@@ -1813,12 +1813,6 @@ GLOBAL_LIST_EMPTY(loadout_items_by_category)
 	path = /obj/item/clothing/suit/roguetown/shirt/kimono
 	donatitem = TRUE
 
-/datum/loadout_item/slitteddress
-	name = "Slitted dress"
-	category = list("Одежда", "Донат")
-	path = /obj/item/clothing/suit/roguetown/shirt/dress/slit
-	donatitem = TRUE
-
 // Табарды и плащи
 
 /datum/loadout_item/donat/matron
@@ -2033,18 +2027,6 @@ GLOBAL_LIST_EMPTY(loadout_items_by_category)
 	path = /obj/item/clothing/mask/rogue/owlmask
 	donatitem = TRUE
 
-/datum/loadout_item/yoruku_oni
-	name = "Oni mask"
-	category = list ("Донат", "Головные уборы")
-	path = /obj/item/clothing/mask/rogue/facemask/yoruku_oni
-	donatitem = TRUE
-
-/datum/loadout_item/yoruku_kitsune
-	name = "Kitsune mask"
-	category = list ("Донат", "Головные уборы")
-	path = /obj/item/clothing/mask/rogue/facemask/yoruku_kitsune
-	donatitem = TRUE
-
 // Шляпы
 
 /datum/loadout_item/stargazerhood
@@ -2202,12 +2184,6 @@ GLOBAL_LIST_EMPTY(loadout_items_by_category)
 	path = /obj/item/storage/belt/rogue/leather/suspenders
 	donatitem = TRUE
 
-/datum/loadout_item/doublebelt
-	name = "Paired slim belts"
-	category = list("Аксессуары", "Донат")
-	path = /obj/item/storage/belt/rogue/leather/double
-	donatitem = TRUE
-
 // Обувь
 
 /datum/loadout_item/hammerhold_shoes
@@ -2222,13 +2198,6 @@ GLOBAL_LIST_EMPTY(loadout_items_by_category)
 	path = /obj/item/clothing/shoes/roguetown/boots/hammerhold_boots
 	donatitem = TRUE
 
-// Одежда на шею
-
-	/datum/loadout_item/woolencollar
-	name = "Woolen Collar"
-	category = list("Аксессуары", "Донат")
-	path = /obj/item/clothing/neck/roguetown/collar/woolen
-	donatitem = TRUE
 
 // Aria Mrix Start
 
