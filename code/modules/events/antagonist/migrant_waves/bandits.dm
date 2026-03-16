@@ -4,7 +4,7 @@
 	wave_type = /datum/migrant_wave/bandit
 	max_occurrences = 2
 
-	weight = 18
+	weight = 0
 
 	earliest_start = 30 MINUTES
 	min_players = 30

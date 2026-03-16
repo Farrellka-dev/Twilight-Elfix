@@ -177,7 +177,7 @@
 	id = "net"
 	alert_type = /atom/movable/screen/alert/status_effect/debuff/netted
 	effectedstats = list(STATKEY_SPD = -5, STATKEY_WIL = -2)
-
+ 
 /datum/status_effect/debuff/netted/on_creation(mob/living/new_owner, newdur)
 	if(newdur)
 		duration = newdur

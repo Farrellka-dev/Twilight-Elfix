@@ -34,6 +34,15 @@
 		temp_recipe = new path()
 		var/datum/runeritual/r = temp_recipe
 		category = r.category
+	else if(ispath(path, /datum/ritual))
+		if(ispath(path, /datum/ritual/transmutation))
+			category = "Transmutation"
+		else if(ispath(path, /datum/ritual/fleshcrafting))
+			category = "Fleshcrafting"
+		else if(ispath(path, /datum/ritual/servantry))
+			category = "Servantry"
+		else
+			category = "Rituals"
 	else if(ispath(path, /obj/effect/proc_holder/spell))
 		var/tier = initial(path:spell_tier)
 		category = "Tier [tier]"
@@ -122,6 +131,10 @@
 		var/datum/runeritual/r = temp_recipe
 		recipe_name = initial(r.name)
 		recipe_html = r.generate_html(user)
+	else if(ispath(path, /datum/ritual))
+		temp_recipe = new path()
+		recipe_name = initial(path:name)
+		recipe_html = temp_recipe:generate_html(user)
 	else if(ispath(path, /obj/effect/proc_holder/spell))
 		var/obj/effect/proc_holder/spell/temp_spell = new path()
 		recipe_name = temp_spell.name
@@ -142,4 +155,3 @@
 
 	html += "</div>"
 	return html
-

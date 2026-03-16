@@ -136,13 +136,14 @@
 				return
 
 /obj/item/rogueweapon/mace/stunmace
-	force = 15
-	force_wielded = 15
+	force = 25
+	force_wielded = 25
 	name = "stunmace"
 	icon = 'icons/roguetown/weapons/misc32.dmi'
 	icon_state = "stunmace0"
 	desc = "Pain is our currency here."
 	gripped_intents = null
+	wlength = WLENGTH_NORMAL
 	w_class = WEIGHT_CLASS_NORMAL
 	possible_item_intents = list(/datum/intent/mace/strike/stunner, /datum/intent/mace/smash/stunner)
 	wbalance = WBALANCE_NORMAL
@@ -150,6 +151,15 @@
 	wdefense = 0
 	var/charge = 100
 	var/on = FALSE
+
+/obj/item/rogueweapon/mace/stunmace/getonmobprop(tag)
+	. = ..()
+	if(tag)
+		switch(tag)
+			if("gen")
+				return list("shrink" = 0.5,"sx" = -8,"sy" = -7,"nx" = 10,"ny" = -7,"wx" = -1,"wy" = -8,"ex" = 1,"ey" = -7,"northabove" = 0,"southabove" = 1,"eastabove" = 1,"westabove" = 0,"nturn" = 91,"sturn" = -90,"wturn" = -90,"eturn" = 90,"nflip" = 0,"sflip" = 8,"wflip" = 8,"eflip" = 0)
+			if("onbelt")
+				return list("shrink" = 0.4,"sx" = -3,"sy" = -4,"nx" = 4,"ny" = -5,"wx" = 0,"wy" = -5,"ex" = 2,"ey" = -5,"nturn" = 0,"sturn" = 70,"wturn" = 0,"eturn" = 0,"nflip" = 0,"sflip" = 1,"wflip" = 0,"eflip" = 0,"northabove" = 0,"southabove" = 1,"eastabove" = 1,"westabove" = 0)
 
 /datum/intent/mace/strike/stunner/afterchange()
 	var/obj/item/rogueweapon/mace/stunmace/I = masteritem
@@ -180,8 +190,13 @@
 /obj/item/rogueweapon/mace/stunmace/funny_attack_effects(mob/living/target, mob/living/user, nodmg)
 	. = ..()
 	if(on)
-		target.electrocute_act(5, src)
-		charge -= 33
+		if(target.stamina >= target.max_stamina)
+			target.electrocute_act(5, src)
+			charge -= 6
+		else/// TODO: Check target.STACON!!!!!!!!!! - EDIT: I never did. Whoops!
+			target.energy_add(-10)
+			target.stamina_add(5)
+			charge -= 3
 		if(charge <= 0)
 			on = FALSE
 			charge = 0
@@ -200,6 +215,8 @@
 /obj/item/rogueweapon/mace/stunmace/attack_self(mob/user)
 	if(on)
 		on = FALSE
+		force = 25
+		force_wielded = 25
 	else
 		if(charge <= 33)
 			to_chat(user, span_warning("It's out of juice."))
@@ -207,6 +224,8 @@
 		user.visible_message(span_warning("[user] flicks [src] on."))
 		on = TRUE
 		charge--
+		force = 6
+		force_wielded = 6
 	playsound(user, pick('sound/items/stunmace_toggle (1).ogg','sound/items/stunmace_toggle (2).ogg','sound/items/stunmace_toggle (3).ogg'), 100, TRUE)
 	if(user.a_intent)
 		var/datum/intent/I = user.a_intent
@@ -224,6 +243,8 @@
 	if(charge <= 0)
 		on = FALSE
 		charge = 0
+		force = 25
+		force_wielded = 25
 		update_icon()
 		var/mob/user = loc
 		if(istype(user))
@@ -240,6 +261,8 @@
 			user.electrocute_act(5, src)
 		on = FALSE
 		charge = 0
+		force = 25
+		force_wielded = 25
 		update_icon()
 		playsound(src, pick('sound/items/stunmace_toggle (1).ogg','sound/items/stunmace_toggle (2).ogg','sound/items/stunmace_toggle (3).ogg'), 100, TRUE)
 
@@ -1056,7 +1079,7 @@
 	if(active_item)
 		return
 	active_item = TRUE
-	if(user.job == "Man at Arms")
+	if((user.job == "Man at Arms") || (user.job == "Royal Guard"))
 		to_chat(user, span_suppradio("The standard's runes pulse, accepting me as its <b>master</b>."))
 		user.change_stat(STATKEY_LCK, 3)
 		user.change_stat(STATKEY_PER, 2)
@@ -1066,6 +1089,15 @@
 			to_chat(user, span_suppradio("<small>It remains ready for your word. You need only ask.</small>"))
 			user.verbs |= /mob/proc/standard_position
 			user.verbs |= /mob/proc/standard_rally
+	if((user.job == "Vanguard"))
+		to_chat(user, span_suppradio("The standard's runes pulse, accepting me as its <b>master</b>."))
+		user.change_stat(STATKEY_LCK, 3)
+		user.change_stat(STATKEY_PER, 2)
+		user.add_stress(/datum/stressevent/keep_standard)
+		ADD_TRAIT(user, TRAIT_IGNOREDAMAGESLOWDOWN, TRAIT_GENERIC)
+		if(HAS_TRAIT(user, TRAIT_STANDARD_BEARER))
+			to_chat(user, span_suppradio("<small>It remains ready for your word. You need only ask.</small>"))
+			user.verbs |= /mob/proc/standard_position_vanguard
 	else
 		to_chat(user, span_suicide("The standard's runes pulse, rejecting me as its <b>master</b>."))
 
@@ -1074,7 +1106,7 @@
 	if(!active_item)
 		return
 	active_item = FALSE
-	if(user.job == "Man at Arms")
+	if((user.job == "Man at Arms") || (user.job == "Royal Guard"))
 		to_chat(user, span_monkeyhive("The standard's runes pulse, rhythmically, as if sad to see you release your control."))
 		user.change_stat(STATKEY_LCK, -3)
 		user.change_stat(STATKEY_PER, -2)
@@ -1084,6 +1116,15 @@
 			to_chat(user, span_monkeyhive("<small>You feel ill. Was that a mistake?</small>"))
 			user.verbs -= /mob/proc/standard_position
 			user.verbs -= /mob/proc/standard_rally
+	if((user.job == "Vanguard"))
+		to_chat(user, span_monkeyhive("The standard's runes pulse, rhythmically, as if sad to see you release your control."))
+		user.change_stat(STATKEY_LCK, -3)
+		user.change_stat(STATKEY_PER, -2)
+		user.remove_stress(/datum/stressevent/keep_standard)
+		REMOVE_TRAIT(user, TRAIT_IGNOREDAMAGESLOWDOWN, TRAIT_GENERIC)
+		if(HAS_TRAIT(user, TRAIT_STANDARD_BEARER))
+			to_chat(user, span_monkeyhive("<small>You feel ill. Was that a mistake?</small>"))
+			user.verbs -= /mob/proc/standard_position_vanguard
 	else
 		to_chat(user, span_suicide("The standard's runes pulse, as if sighing in relief once I let go."))
 
