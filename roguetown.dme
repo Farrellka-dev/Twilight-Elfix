@@ -3477,7 +3477,6 @@
 #include "modular_twilight_axis\code\modules\roguetown\roguejobs\alchemist\container.dm"
 #include "modular_twilight_axis\code\modules\roguetown\roguejobs\alchemist\reagents.dm"
 #include "modular_twilight_axis\code\modules\roguetown\roguejobs\blacksmith\anvil_recipes\armor.dm"
-#include "modular_twilight_axis\code\modules\roguetown\roguejobs\blacksmith\anvil_recipes\weapons.dm"
 #include "modular_twilight_axis\code\modules\roguetown\roguejobs\blacksmith\anvil_recipes\tools.dm"
 #include "modular_twilight_axis\code\modules\roguetown\roguemachine\ATM.dm"
 #include "modular_twilight_axis\code\modules\roguetown\roguemachine\blackmarket.dm"
